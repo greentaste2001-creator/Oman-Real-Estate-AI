@@ -1,0 +1,417 @@
+<!-- prediction.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Price Predictions - Real Estate Vision</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Urbanist:wght@300;400;500;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Urbanist',sans-serif;}
+body{
+background:linear-gradient(rgba(0,0,0,.4),rgba(0,0,0,.4)),url('{{ url_for("static", filename="images/bedroom.jpg") }}') center/cover no-repeat fixed;
+color:#333;min-height:100vh;
+}
+.navbar{
+background:linear-gradient(to right,#5C4033,#C65D20);
+padding:15px 50px;display:flex;justify-content:space-between;align-items:center;
+position:sticky;top:0;z-index:1000;
+}
+.logo{color:white;font-size:24px;font-weight:700;text-decoration:none;}
+.nav-links{list-style:none;display:flex;gap:25px;}
+.nav-links a{color:#ffe9c6;text-decoration:none;font-weight:500;}
+.nav-links a.active,.nav-links a:hover{color:white;border-bottom:2px solid #fff;}
+.buttons{display:flex;gap:10px;}
+.btn{padding:8px 18px;border-radius:6px;border:none;font-weight:600;cursor:pointer;}
+.login,.signup{background:#F8DFA8;color:#5C4033;}
+
+.hero-section{text-align:center;padding:60px 50px 40px;color:white;}
+.hero-section h1{font-family:'Playfair Display',serif;font-size:48px;}
+.hero-section p{font-size:20px;max-width:700px;margin:auto;}
+
+.main-container{max-width:1200px;margin:auto;padding:0 20px;display:flex;flex-direction:column;align-items:center;}
+
+.prediction-form-container{
+background:rgba(255,245,230,.95);
+padding:40px;border-radius:20px;
+box-shadow:0 8px 25px rgba(0,0,0,.2);
+width:100%;max-width:600px;
+margin-bottom: 50px;
+}
+
+.prediction-form-container h2{
+font-family:'Playfair Display',serif;font-size:32px;color:#5C4033;text-align:center;margin-bottom:25px;
+}
+
+.form-group{margin-bottom:20px;}
+.form-group label{display:block;margin-bottom:8px;font-weight:600;color:#5C4033;}
+.form-group input,.form-group select{
+width:100%;padding:12px;border-radius:8px;border:2px solid #C65D20;
+background:#fff8f0;font-size:16px;
+}
+.submit-btn{
+width:100%;padding:15px;border:none;border-radius:10px;
+background:linear-gradient(135deg,#1f1f1f,#5C4033);
+color:white;font-size:18px;font-weight:700;cursor:pointer;
+transition: transform 0.2s;
+}
+.submit-btn:active { transform: scale(0.98); }
+
+/* -------------------- Footer -------------------- */
+footer {
+  background-color: #1f1f1f;
+  color: #eaeaea;
+  padding: 55px 70px 25px;
+  font-size: 16px;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 50px;
+}
+
+.footer-left img {
+  width: 140px;
+  margin-bottom: 12px;
+}
+
+.footer-left p {
+  font-size: 17px;
+  max-width: 300px;
+  line-height: 1.6;
+}
+
+.footer-social a img {
+  width: 24px;
+  transition: transform 0.3s;
+}
+
+.footer-social a:hover img {
+  transform: scale(1.15);
+}
+
+.footer-column h4 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #ffffff;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 9px;
+}
+
+.footer-column ul li a {
+  text-decoration: none;
+  color: #bfbfbf;
+  transition: color 0.3s;
+  font-size: 16px;
+}
+
+.footer-column ul li a:hover {
+  color: #ffffff;
+}
+
+.footer-divider {
+  border-top: 1px solid #444;
+  margin: 25px 0 10px;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 15px;
+  color: #999;
+}
+
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+<a href="{{ url_for('homepage') }}" class="logo">Real Estate Vision</a>
+<ul class="nav-links">
+  <li><a href="{{ url_for('homepage') }}">Home</a></li>
+  <li><a href="{{ url_for('terms') }}">Term</a></li>
+  <li><a href="{{ url_for('predictions') }}" class="active">Predictions</a></li>
+  
+</ul>
+
+<div class="buttons">
+        <a href="{{ url_for('register') }}" class="btn signup" style="text-decoration: none; display: inline-block; text-align: center;">Register</a>
+    </div>
+</nav>
+
+<section class="hero-section">
+<h1>AI-Powered Price Predictions</h1>
+<p>Get accurate market price estimates for your property using advanced machine learning.</p>
+</section>
+
+<div class="main-container">
+
+<div class="prediction-form-container">
+<h2><i class="fas fa-calculator"></i> Property Details</h2>
+
+<form id="predictionForm">
+
+<!-- governorate -->
+<div class="form-group">
+  <label>Governorate</label>
+  <input list="governorates" name="governorate" required>
+  <datalist id="governorates">
+    <option value="Muscat">
+    <option value="Dhofar">
+    <option value="Al Batinah North">
+    <option value="Al Batinah South">
+    <option value="Ad Dakhiliyah">
+    <option value="Ash Sharqiyah North">
+    <option value="Ash Sharqiyah South">
+    <option value="Al Dhahirah">
+    <option value="Al Buraimi">
+    <option value="Al Wusta">
+    <option value="Musandam">
+  </datalist>
+</div>
+
+<!-- wilayat -->
+<div class="form-group">
+  <label>Wilayat</label>
+  <input list="wilayat" name="wilayat" required>
+  <datalist id="wilayat">
+          <optgroup label="Muscat governorate">
+            <option value="Muscat">Muscat</option>
+            <option value="Seeb">Seeb</option>
+            <option value="Bausher">Bausher</option>
+            <option value="Al Khuwair">Al Khuwair</option>
+            <option value="Qurum">Qurum</option>
+            <option value="Ruwi">Ruwi</option>
+            <option value="Muttrah">Muttrah</option>
+            <option value="Al Ghubra">Al Ghubra</option>
+            <option value="Al Azaiba">Al Azaiba</option>
+            <option value="Al Khoud">Al Khoud</option>
+            <option value="Al Hail">Al Hail</option>
+            <option value="Al Ansab">Al Ansab</option>
+            <option value="Al Amerat">Al Amerat</option>
+          </optgroup>
+          <optgroup label="Dhofar governorate">
+            <option value="Salalah">Salalah</option>
+            <option value="Raysut">Raysut</option>
+            <option value="Taqah">Taqah</option>
+            <option value="Mirbat">Mirbat</option>
+            <option value="Thumrait">Thumrait</option>
+          </optgroup>
+          <optgroup label="Al Batinah North">
+            <option value="Sohar">Sohar</option>
+            <option value="Saham">Saham</option>
+            <option value="Shinas">Shinas</option>
+            <option value="Liwa">Liwa</option>
+            <option value="Khaburah">Khaburah</option>
+          </optgroup>
+          <optgroup label="Al Batinah South">
+            <option value="Barka">Barka</option>
+            <option value="Al Musannah">Al Musannah</option>
+            <option value="Nakhl">Nakhl</option>
+            <option value="Rustaq">Rustaq</option>
+          </optgroup>
+          <optgroup label="Al Sharqiyah North">
+            <option value="Sur">Sur</option>
+            <option value="Ibra">Ibra</option>
+            <option value="Al Kamil wal Wafi">Al Kamil wal Wafi</option>
+            <option value="Al Mudhaibi">Al Mudhaibi</option>
+            <option value="Bidiyah">Bidiyah</option>
+          </optgroup>
+          <optgroup label="Al Sharqiyah South">
+            <option value="Jaalan Bani Bu Ali">Jaalan Bani Bu Ali</option>
+            <option value="Jaalan Bani Bu Hassan">Jaalan Bani Bu Hassan</option>
+            <option value="Masirah">Masirah</option>
+          </optgroup>
+          <optgroup label="Ad Dakhiliyah">
+            <option value="Nizwa">Nizwa</option>
+            <option value="Bahla">Bahla</option>
+            <option value="Adam">Adam</option>
+            <option value="Al Hamra">Al Hamra</option>
+            <option value="Manah">Manah</option>
+            <option value="Izki">Izki</option>
+            <option value="Samail">Samail</option>
+            <option value="Bidbid">Bidbid</option>
+          </optgroup>
+          <optgroup label="Ad Dhahirah">
+            <option value="Ibri">Ibri</option>
+            <option value="Yanqul">Yanqul</option>
+            <option value="Dank">Dank</option>
+          </optgroup>
+          <optgroup label="Al Wusta">
+            <option value="Haima">Haima</option>
+            <option value="Duqm">Duqm</option>
+            <option value="Mahout">Mahout</option>
+          </optgroup>
+          <optgroup label="Al Buraimi">
+            <option value="Buraimi">Buraimi</option>
+            <option value="Mahdah">Mahdah</option>
+          </optgroup>
+          <optgroup label="Musandam">
+            <option value="Khasab">Khasab</option>
+            <option value="Dibba">Dibba</option>
+            <option value="Bukha">Bukha</option>
+            <option value="Madha">Madha</option>
+          </optgroup>
+  </datalist>
+</div>
+
+<div class="form-group">
+  <label>Property Type</label>
+  <select name="property_type" required>
+    <option value="">Select</option>
+    <option value="Villa">Villa</option>
+    <option value="Townhouse">Townhouse</option>
+    <option value="Apartment">Apartment</option>
+  </select>
+</div>
+
+<div class="form-group">
+  <label>Surface Area (sqm)</label>
+  <input type="number" name="area" required> <!-- تم تغيير الاسم ليتطابق مع الموديل -->
+</div>
+
+<div class="form-group">
+  <label>Bedrooms</label>
+  <input type="number" name="bedrooms" required>
+</div>
+
+<div class="form-group">
+  <label>Bathrooms</label>
+  <input type="number" step="0.5" name="bathrooms" required>
+</div>
+
+<div class="form-group">
+  <label>Floor</label>
+  <input type="number" name="floor" required>
+</div>
+
+<div class="form-group">
+  <label>Building Age</label>
+  <select name="building_age" required>
+    <option value="">Select</option>
+    <option value="Less than 1 year">Less than 1 year</option>
+    <option value="1 - 3 years">1 - 3 years</option>
+    <option value="4 - 6 years">4 - 6 years</option>
+    <option value="7 - 10 years">7 - 10 years</option>
+    <option value="More than 10 years">More than 10 years</option>
+  </select>
+</div>
+
+<button type="submit" class="submit-btn">Get Price Prediction</button>
+</form>
+
+<!-- هنا يظهر السعر بعد التنبؤ -->
+<div id="prediction-result" style="
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    background: rgba(198, 93, 32, 0.2);
+    color: #5C4033;
+    font-weight: 700;
+    font-size: 20px;
+    text-align: center;
+    display: none;
+    border: 1px solid #C65D20;
+"></div>
+
+</div>
+</div>
+
+<!-- Footer -->
+<footer>
+<div class="footer-container">
+  <div class="footer-left">
+    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+    <p>Real Estate Vision</p>
+    <div class="footer-social">
+      <a href="#"><img src="{{ url_for('static', filename='images/facebook.png')}}" alt="Facebook"></a>
+      <a href="#"><img src="{{ url_for('static', filename='images/twitter.png')}}" alt="Twitter"></a>
+      <a href="#"><img src="{{ url_for('static', filename='images/instagram.png')}}" alt="Instagram"></a>
+      <a href="#"><img src="{{ url_for('static', filename='images/linkedin.png')}}" alt="Linkedin"></a>
+    </div>
+  </div>
+
+  <div class="footer-column">
+    <h4>Quick Links</h4>
+    <ul>
+      <li><a href="{{ url_for('homepage') }}">Home</a></li>
+      <li><a href="{{ url_for('terms') }}">Term</a></li>
+      <li><a href="{{ url_for('predictions') }}" class="active">Predictions</a></li>
+    </ul>
+  </div>
+
+  
+
+  <div class="footer-column">
+    <h4>Follow & Contact</h4>
+    <ul>
+      <li>Sultanate of Oman</li>
+      <li>📞 95237331</li>
+      <li>📧 realestatevision@gmail.com</li>
+      <li>🕐 Mon-Fri: 9AM - 5PM</li>
+    </ul>
+  </div>
+</div>
+
+<div class="footer-divider"></div>
+
+<div class="footer-bottom">
+  <p>© 2025 Real Estate Vision. All rights reserved.</p>
+</div>
+</footer>
+
+<script>
+const form = document.getElementById('predictionForm');
+const resultDiv = document.getElementById('prediction-result');
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault(); 
+
+    // إظهار رسالة تحميل بسيطة
+    resultDiv.style.display = "block";
+    resultDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating price...';
+
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch('/predict', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.predicted_price) {
+            resultDiv.style.display = "block";
+            // تنسيق السعر بفاصلة آلاف
+            const formattedPrice = Number(data.predicted_price).toLocaleString();
+            resultDiv.innerHTML = "Predicted Price: <span style='color:#C65D20; font-size:24px;'>" + formattedPrice + " OMR</span>";
+        } else {
+            resultDiv.style.display = "block";
+            resultDiv.textContent = "Error: " + data.error;
+        }
+
+    } catch (err) {
+        resultDiv.style.display = "block";
+        resultDiv.textContent = "Network Error: " + err;
+    }
+});
+</script>
+
+</body>
+</html>

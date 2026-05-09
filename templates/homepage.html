@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Vision</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+    <a href="{{ url_for('homepage') }}" class="logo">Real Estate Vision</a>
+
+    <ul class="nav-links">
+        <li><a href="{{ url_for('homepage') }}" class="active">Home</a></li>
+        <li><a href="{{ url_for('predictions') }}">Predictions</a></li>
+        <li><a href="{{ url_for('terms') }}">Term</a></li>
+    </ul>
+
+    <div class="buttons">
+        <a href="{{ url_for('register') }}" class="btn signup" style="text-decoration: none; display: inline-block; text-align: center;">Register</a>
+    </div>
+</nav>
+
+<header class="hero">
+    <div class="overlay"></div>
+    <div class="hero-content">
+        <h1>Real Estate Vision</h1>
+        <p>Discover and predict real estate prices using AI.</p>
+    </div>
+</header>
+<section class="features">
+    <div class="section-title">
+        <h2>Why Choose Us?</h2>
+        <p>Expertise in Omani Real Estate Market through Technology</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-card">
+            <i class="fas fa-robot"></i>
+            <h3>AI Predictions</h3>
+            <p>Get accurate future price estimates for properties in Muscat and beyond.</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-chart-line"></i>
+            <h3>Market Analytics</h3>
+            <p>Track real-time market trends and inflation data for smarter investments.</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Trusted Listings</h3>
+            <p>Direct communication between verified buyers and sellers in Oman.</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-container">
+        <div class="footer-left">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+            <p>Real Estate Vision</p>
+            <div class="footer-social">
+                <a href="#"><img src="{{ url_for('static', filename='images/facebook.png')}}" alt="Facebook"></a>
+                <a href="#"><img src="{{ url_for('static', filename='images/twitter.png')}}" alt="Twitter"></a>
+                <a href="#"><img src="{{ url_for('static', filename='images/instagram.png')}}" alt="Instagram"></a>
+                <a href="#"><img src="{{ url_for('static', filename='images/linkedin.png')}}" alt="Linkedin"></a>
+            </div>
+        </div>
+
+        <div class="footer-column">
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="{{ url_for('homepage') }}">Home</a></li>
+                <li><a href="{{ url_for('predictions') }}">Predictions</a></li>
+                <li><a href="{{ url_for('terms') }}">Term</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-column">
+            <h4>Follow & Contact</h4>
+            <ul>
+                <li>Sultanate of Oman</li>
+                <li>📞 95237331</li>
+                <li>📧 realestatevision@gmail.com</li>
+                <li>🕐 Mon-Fri: 9AM - 5PM</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer-divider"></div>
+
+    <div class="footer-bottom">
+        <p>© 2026 Real Estate Vision. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

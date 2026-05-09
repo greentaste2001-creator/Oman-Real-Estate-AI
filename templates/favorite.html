@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Homes - Real Estate Vision</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Urbanist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(to right, #5C4033, #C65D20);
+            --brown: #5C4033;
+            --orange: #C65D20;
+            --bg-light: #f4f7f6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Urbanist', sans-serif; }
+        
+        body { 
+            background: var(--bg-light); 
+            background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); 
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+
+        .navbar {
+            width: 100%; background: var(--primary-gradient); padding: 15px 50px;
+            display: flex; justify-content: flex-end; align-items: center;
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .navbar .logo { 
+            font-size: 24px; font-weight: 700; color: white; text-decoration: none;
+            position: absolute; left: 50%; transform: translateX(-50%);
+        }
+        .btn-logout-nav {
+            color: white; text-decoration: none; font-weight: 600; padding: 8px 20px;
+            border: 1px solid rgba(255,255,255,0.4); border-radius: 8px; transition: 0.3s;
+        }
+
+        .buyer-hero {
+            height: 180px; 
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)), 
+                        url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1920&q=80') center/cover;
+            display: flex; justify-content: center; align-items: center;
+            color: white;
+        }
+        .buyer-hero h1 { font-family: 'Playfair Display', serif; font-size: 38px; }
+
+        .container { display: flex; padding: 0 50px 60px; margin-top: -30px; gap: 30px; flex: 1; }
+
+        .sidebar {
+            width: 280px; background: white; padding: 30px 20px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); height: fit-content;
+        }
+        .side-profile-card { text-align: center; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        .side-profile-card img { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid var(--orange); padding: 3px; }
+        
+        .sidebar ul { list-style: none; }
+        .sidebar ul li a { 
+            text-decoration: none; color: #555; padding: 12px 15px; display: flex; align-items: center; border-radius: 10px; font-weight: 600; transition: 0.3s;
+        }
+        .sidebar ul li a i { margin-right: 12px; color: var(--orange); width: 20px; }
+        .sidebar ul li a:hover, .sidebar ul li a.active { background: #fff5ed; color: var(--orange); }
+
+        .dashboard-content { flex: 1; }
+        .section-title { font-family: 'Playfair Display', serif; color: var(--brown); margin-bottom: 25px; font-size: 28px; }
+
+        .favorites-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;
+        }
+        .fav-card {
+            background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            transition: 0.3s; position: relative; border: 1px solid #eee;
+        }
+        .fav-card:hover { transform: translateY(-8px); }
+        
+        .fav-card-img { width: 100%; height: 200px; object-fit: cover; }
+        
+        .fav-card-body { padding: 20px; }
+        .property-tag { 
+            background: #fff5ed; color: var(--orange); font-size: 11px; 
+            font-weight: 800; padding: 4px 10px; border-radius: 5px; 
+            text-transform: uppercase; margin-bottom: 10px; display: inline-block;
+        }
+
+        .fav-card-body h4 { color: var(--brown); font-size: 20px; margin-bottom: 5px; }
+        .location { color: #888; font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 5px; }
+        
+        .fav-price { color: var(--orange); font-size: 22px; font-weight: 800; margin-bottom: 15px; }
+
+        .fav-specs {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            font-size: 13px; color: #666; padding: 15px 0; border-top: 1px solid #f0f0f0;
+        }
+        .fav-specs span { display: flex; align-items: center; gap: 8px; }
+        .fav-specs i { color: var(--orange); width: 15px; }
+        
+        .card-actions { 
+            display: flex; justify-content: space-between; align-items: center;
+            border-top: 1px solid #eee; padding-top: 15px; margin-top: 5px;
+        }
+        
+        .btn-delete-fav {
+            width: 100%; padding: 12px; background: #fff1f1; color: #ff5c5c;
+            border: none; border-radius: 10px; cursor: pointer; transition: 0.3s; 
+            font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-delete-fav:hover { background: #ff5c5c; color: white; }
+
+        .empty-state { text-align: center; padding: 60px; background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+
+         footer { background-color: #1a1a1a; color: #eaeaea; padding: 80px 80px 30px; margin-top: auto; }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 60px; border-bottom: 1px solid #333; padding-bottom: 50px; }
+        .footer-brand { flex: 1.5; min-width: 250px; }
+        .footer-brand img { width: 180px; margin-bottom: 20px; }
+        .footer-brand p { font-size: 24px; margin-bottom: 20px; color: white; font-weight: 700; }
+        .social-icons a { color: #888; font-size: 28px; margin-right: 25px; transition: 0.3s; }
+        .social-icons a:hover { color: var(--orange); }
+        
+        .footer-col { flex: 1; min-width: 200px; }
+        .footer-col h4 { color: white; margin-bottom: 30px; font-size: 22px; font-weight: 700; text-transform: uppercase; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 15px; }
+        .footer-col ul li a { color: #aaa; text-decoration: none; font-size: 18px; transition: 0.3s; }
+        .footer-col ul li a:hover { color: white; padding-left: 5px; }
+        
+        .footer-bottom { text-align: center; padding: 30px 0; color: #666; font-size: 16px; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="logo">Real Estate Vision</a>
+        <a href="{{ url_for('logout') }}" class="btn-logout-nav">Logout</a>
+    </nav>
+
+    <header class="buyer-hero">
+        <h1>My Favorites ❤️</h1>
+    </header>
+
+    <main class="container">
+        <aside class="sidebar">
+            <div class="side-profile-card">
+                <img src="{{ url_for('static', filename='images/profiles/' ~ profile_image) if profile_image else url_for('static', filename='images/default.png') }}" alt="Profile">
+                <h3>{{ username }}</h3>
+            </div>
+            <ul>
+                <li><a href="{{ url_for('buyer_dashboard') }}"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                <li><a href="{{ url_for('exploring') }}"><i class="fas fa-search"></i> Find Homes</a></li>
+                <li><a href="{{ url_for('favorite') }}" class="active"><i class="fas fa-heart"></i> Saved Homes</a></li>
+                <li><a href="{{ url_for('buyer_profile') }}"><i class="fas fa-user-circle"></i> My Profile</a></li>
+                
+            </ul>
+        </aside>
+
+        <div class="dashboard-content">
+            
+
+            {% if favorite_properties %}
+            <div class="favorites-grid">
+                {% for property in favorite_properties %}
+                <div class="fav-card">
+                    <img src="{{ url_for('static', filename='uploads/' ~ property.image_url) if property.image_url else 'https://via.placeholder.com/500x300' }}" 
+                         class="fav-card-img" 
+                         alt="Property" 
+                         onerror="this.src='https://via.placeholder.com/500x300?text=Property+Image'">
+                    
+                    <div class="fav-card-body">
+                        <span class="property-tag">{{ property.property_type or 'Property' }}</span>
+                        <h4>{{ property.title }}</h4>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> {{ property.wilayat }}, {{ property.governorate }}</p>
+                        
+                        <div class="fav-price">{{ "{:,.0f}".format(property.price) }} OMR</div>
+                        
+                        <div class="fav-specs">
+                            <span><i class="fas fa-bed"></i> {{ property.bedrooms }} Bedrooms</span>
+                            <span><i class="fas fa-expand-arrows-alt"></i> {{ property.area }} m²</span>
+                            <span><i class="fas fa-couch"></i> {{ property.furnishing or 'Unspecified' }}</span>
+                            <span><i class="fas fa-bath"></i> {{ property.bathrooms or '0' }} Baths</span>
+                        </div>
+                        
+                        <div class="card-actions">
+                            <form action="{{ url_for('remove_favorite', property_id=property.id) }}" method="POST" style="width: 100%;">
+                                <button type="submit" class="btn-delete-fav">
+                                    <i class="fas fa-trash-alt"></i> Remove from Favorites
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="far fa-heart" style="font-size: 50px; color: #ddd; margin-bottom: 20px; display: block;"></i>
+                <p>You haven't saved any homes yet.</p>
+                <a href="{{ url_for('exploring') }}" style="color: var(--orange); font-weight: 700; text-decoration: none; margin-top: 15px; display: inline-block;">Start Exploring →</a>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+     <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+                <p>Real Estate Vision</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{{ url_for('homepage') }}">Home Page</a></li>
+                    <li><a href="{{ url_for('terms') }}">Term</a></li>
+                    <li><a href="{{ url_for('predictions') }}">Market Predictions</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Contact Info</h4>
+                <ul>
+                    <li>Sultanate of Oman, Muscat</li>
+                    <li>📞 +968 95237331</li>
+                    <li>📧 realestatevision@gmail.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Real Estate Vision. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+</html>

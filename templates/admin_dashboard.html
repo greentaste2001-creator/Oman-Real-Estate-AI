@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Real Estate Vision</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Urbanist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(to right, #5C4033, #C65D20);
+            --brown: #5C4033;
+            --orange: #C65D20;
+            --bg-light: #f4f7f6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Urbanist', sans-serif; }
+        
+        body { 
+            background: var(--bg-light); 
+            background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); 
+        }
+
+        /* -------------------- Navbar -------------------- */
+        .navbar {
+            width: 100%;
+            background: var(--primary-gradient);
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar .logo { font-size: 24px; font-weight: 700; color: white; }
+        .nav-links { list-style: none; display: flex; gap: 25px; }
+        .nav-links a { text-decoration: none; color: #ffe9c6; font-weight: 500; transition: 0.3s; }
+        .nav-links a:hover { color: white; }
+        .btn-logout { background: #9e6c08; color: white; padding: 8px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: 0.3s; text-decoration: none; }
+
+        /* -------------------- Hero Section (الصورة كما كانت قبل) -------------------- */
+        .admin-hero {
+            height: 250px;
+            background: linear-gradient(rgba(92, 64, 51, 0.7), rgba(198, 93, 32, 0.6)), 
+                        url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1350&q=80') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+        .admin-hero h1 { font-family: 'Playfair Display', serif; font-size: 40px; }
+
+        /* -------------------- Main Content -------------------- */
+        .main-content { padding: 0 50px 60px; margin-top: -40px; position: relative; z-index: 2; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-bottom: 50px; }
+        .stat-card { background: white; padding: 30px; border-radius: 15px; display: flex; align-items: center; gap: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .stat-icon { font-size: 35px; color: var(--brown); }
+        .stat-info h3 { font-size: 32px; color: var(--orange); }
+
+        .section-title { font-family: 'Playfair Display', serif; font-size: 30px; color: var(--brown); margin: 50px 0 25px; border-left: 5px solid var(--orange); padding-left: 15px; }
+        
+        .table-container { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); overflow-x: auto; margin-bottom: 50px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 15px; background: #fafafa; color: var(--brown); }
+        td { padding: 15px; border-bottom: 1px solid #eee; }
+
+        /* -------------------- Property Cards (رجعت مثل قبل) -------------------- */
+        .admin-homes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 35px; }
+        .home-card { background: white; border-radius: 30px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        
+        .card-header { position: relative; height: 220px; }
+        .card-header img { width: 100%; height: 100%; object-fit: cover; }
+        .status-badge { position: absolute; top: 20px; left: 20px; background: white; color: var(--orange); padding: 5px 15px; border-radius: 50px; font-size: 12px; font-weight: 700; }
+
+        .card-body { padding: 25px; }
+        .card-body h3 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--brown); margin-bottom: 10px; }
+        .card-price { font-size: 22px; font-weight: 700; color: var(--orange); margin-bottom: 20px; display: block; }
+        
+        .prop-meta { display: flex; gap: 15px; margin-bottom: 25px; }
+        .meta-item { background: #f8f9fa; padding: 8px 12px; border-radius: 10px; font-size: 14px; color: #666; display: flex; align-items: center; gap: 6px; }
+        .meta-item i { color: var(--orange); }
+
+        .actions-container { display: flex; flex-direction: column; gap: 10px; }
+        .decision-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn-action { padding: 12px; border-radius: 15px; font-weight: 700; cursor: pointer; border: none; font-size: 14px; }
+        .btn-approve { background: var(--brown); color: white; }
+        .btn-reject { background: #fff1f1; color: #ff5252; }
+        .btn-delete-permanent { background: transparent; color: #999; border: 1px dashed #ccc; padding: 10px; border-radius: 15px; width: 100%; margin-top: 5px; font-size: 13px; }
+
+        /* -------------------- Footer (حذفنا Services فقط) -------------------- */
+        footer { 
+            background-color: #1f1f1f; 
+            color: #eaeaea; 
+            padding: 80px 80px 30px; /* زيادة الحشوة العلوية */
+            margin-top: 100px; 
+        }
+        .footer-content { 
+            display: flex; 
+            justify-content: space-between; 
+            flex-wrap: wrap; 
+            gap: 60px; 
+            border-bottom: 1px solid #333; 
+            padding-bottom: 50px; 
+        }
+        .footer-brand { flex: 1.5; min-width: 250px; }
+        .footer-brand img { width: 180px; margin-bottom: 20px; } /* تكبير اللوجو */
+        .footer-brand p { 
+            font-size: 24px; /* تكبير اسم الشركة */
+            margin-bottom: 20px; 
+            color: white; 
+            font-weight: 700;
+        }
+        .social-icons a { 
+            color: #888; 
+            font-size: 28px; /* تكبير أيقونات التواصل */
+            margin-right: 25px; 
+            transition: 0.3s;
+        }
+        .social-icons a:hover { color: var(--orange); }
+        
+        .footer-col { flex: 1; min-width: 200px; }
+        .footer-col h4 { 
+            color: white; 
+            margin-bottom: 30px; 
+            font-size: 22px; /* تكبير العناوين */
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 15px; }
+        .footer-col ul li a, .footer-col ul li { 
+            color: #aaa; 
+            text-decoration: none; 
+            font-size: 18px; /* تكبير الروابط والنصوص */
+            transition: 0.3s; 
+        }
+        .footer-col ul li a:hover { color: white; padding-left: 5px; }
+        
+        .footer-bottom { 
+            text-align: center; 
+            padding: 30px 0; 
+            color: #666; 
+            font-size: 16px; /* تكبير حقوق النشر */
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Real Estate Vision</div>
+        <ul class="nav-links">
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#users">User Management</a></li>
+            <li><a href="#properties">Properties</a></li>
+        </ul>
+        <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+    </nav>
+
+    <header class="admin-hero">
+        <h1>Control Panel</h1>
+        <p>Managing the future of Omani Real Estate</p>
+    </header>
+
+    <main class="main-content">
+        <div class="stats-grid" id="dashboard">
+            <div class="stat-card">
+                <i class="fas fa-users stat-icon"></i>
+                <div class="stat-info"><p>Total Users</p><h3>{{ total_users }}</h3></div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-building stat-icon"></i>
+                <div class="stat-info"><p>Active Listings</p><h3>{{ total_properties }}</h3></div>
+            </div>
+        </div>
+
+        <h2 class="section-title" id="users">Platform Users</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td style="font-weight: 600;">{{ u.name }}</td>
+                        <td>{{ u.email }}</td>
+                        <td>{{ u.user_type }}</td>
+                        <td>
+                            <form action="{{ url_for('delete_user', user_id=u.id) }}" method="POST">
+                                <button style="color: #ff5252; background: none; border: none; cursor: pointer;">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h2 class="section-title" id="properties">Property Submissions</h2>
+        <div class="admin-homes-grid">
+            {% for p in properties %}
+            <div class="home-card">
+                <div class="card-header">
+                    {% if p.images %}
+                        <img src="{{ url_for('static', filename='uploads/' + p.images) }}" alt="property">
+                    {% else %}
+                        <img src="https://via.placeholder.com/400x250" alt="property">
+                    {% endif %}
+                    <div class="status-badge">{{ p.status }}</div>
+                </div>
+                <div class="card-body">
+                    <h3>{{ p.title }}</h3>
+                    <span class="card-price">{{ p.price }} OMR</span>
+                    
+                    <div class="prop-meta">
+                        <div class="meta-item"><i class="fas fa-map-marker-alt"></i> {{ p.wilayat }}</div>
+                        <div class="meta-item"><i class="fas fa-vector-square"></i> {{ p.surface_area }} m²</div>
+                    </div>
+
+                    <div class="actions-container">
+                        <div class="decision-btns">
+                            <form action="{{ url_for('approve_property', property_id=p.id) }}" method="POST">
+                                <button class="btn-action btn-approve" style="width: 100%;">Approve</button>
+                            </form>
+                            <form action="{{ url_for('reject_property', property_id=p.id) }}" method="POST">
+                                <button class="btn-action btn-reject" style="width: 100%;">Reject</button>
+                            </form>
+                        </div>
+                        <form action="{{ url_for('delete_property_admin', property_id=p.id) }}" method="POST">
+                            <button class="btn-delete-permanent">Delete Permanently</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+                <p>Real Estate Vision</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{{ url_for('homepage') }}">Home</a></li>
+                    <li><a href="{{ url_for('terms') }}">Term</a></li>
+                    <li><a href="{{ url_for('predictions') }}">Predictions</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <ul>
+                    <li>Sultanate of Oman</li>
+                    <li>📞 95237331</li>
+                    <li>📧 realestatevision@gmail.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 Real Estate Vision. All rights reserved.</div>
+    </footer>
+
+</body>
+</html>

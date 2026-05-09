@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exploring - Real Estate Vision</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Urbanist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(to right, #5C4033, #C65D20);
+            --brown: #5C4033;
+            --orange: #C65D20;
+            --bg-light: #f4f7f6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Urbanist', sans-serif; }
+        body { background: var(--bg-light); display: flex; flex-direction: column; min-height: 100vh; }
+
+        .navbar { width: 100%; background: var(--primary-gradient); padding: 15px 50px; display: flex; justify-content: flex-end; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .navbar .logo { font-size: 24px; font-weight: 700; color: white; text-decoration: none; position: absolute; left: 50%; transform: translateX(-50%); }
+
+        .hero-mini { height: 150px; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=1920&q=80') center/cover; display: flex; justify-content: center; align-items: center; color: white; }
+
+        .container { display: flex; padding: 0 50px 60px; margin-top: -30px; gap: 30px; flex: 1; }
+
+        .sidebar { width: 280px; background: white; padding: 30px 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); height: fit-content; }
+        .side-profile-card { text-align: center; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        .side-profile-card img { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid var(--orange); padding: 3px; }
+        .sidebar ul { list-style: none; }
+        .sidebar ul li a { text-decoration: none; color: #555; padding: 12px 15px; display: flex; align-items: center; border-radius: 10px; font-weight: 600; transition: 0.3s; }
+        .sidebar ul li a:hover, .sidebar ul li a.active { background: #fff5ed; color: var(--orange); }
+        .sidebar ul li a i { margin-right: 12px; color: var(--orange); width: 20px; }
+
+        .explore-content { flex: 1; }
+        .search-box { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .search-row { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-row input { flex: 1; padding: 12px 15px; border: 1px solid #eee; border-radius: 10px; outline: none; font-size: 15px; }
+        .btn-search { background: var(--primary-gradient); color: white; border: none; padding: 0 25px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+
+        .filters-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+        .filters-row select, .filters-row input { padding: 10px; border-radius: 8px; border: 1px solid #eee; background: #fafafa; font-size: 13px; outline: none; }
+
+        .homes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        .home-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); position: relative; transition: 0.3s; }
+        .home-card:hover { transform: translateY(-5px); }
+        .home-card img { width: 100%; height: 180px; object-fit: cover; }
+
+        .fav-btn { position: absolute; top: 10px; right: 10px; background: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); color: #ff5c5c; z-index: 10; }
+        .card-info { padding: 15px; }
+        .price { color: var(--orange); font-weight: 800; font-size: 18px; margin-top: 10px; display: block; }
+        .specs { display: flex; gap: 12px; margin-top: 10px; font-size: 12px; color: #777; border-top: 1px solid #f0f0f0; padding-top: 10px; }
+        .btn-view-card { display: block; text-align: center; background: #fff5ed; color: var(--orange); padding: 10px; border-radius: 8px; text-decoration: none; font-weight: 700; margin-top: 15px; transition: 0.3s; }
+        .btn-view-card:hover { background: var(--orange); color: white; }
+
+        footer { background-color: #1a1a1a; color: #eaeaea; padding: 80px 80px 30px; margin-top: auto; }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 60px; border-bottom: 1px solid #333; padding-bottom: 50px; }
+        .footer-brand { flex: 1.5; min-width: 250px; }
+        .footer-brand img { width: 180px; margin-bottom: 20px; }
+        .footer-brand p { font-size: 24px; margin-bottom: 20px; color: white; font-weight: 700; }
+        .social-icons a { color: #888; font-size: 28px; margin-right: 25px; transition: 0.3s; }
+        .social-icons a:hover { color: var(--orange); }
+        
+        .footer-col { flex: 1; min-width: 200px; }
+        .footer-col h4 { color: white; margin-bottom: 30px; font-size: 22px; font-weight: 700; text-transform: uppercase; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 15px; }
+        .footer-col ul li a { color: #aaa; text-decoration: none; font-size: 18px; transition: 0.3s; }
+        .footer-col ul li a:hover { color: white; padding-left: 5px; }
+        
+        .footer-bottom { text-align: center; padding: 30px 0; color: #666; font-size: 16px; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="logo">Real Estate Vision</a>
+        <a href="{{ url_for('logout') }}" style="color: white; text-decoration: none; font-weight: 600;">Logout</a>
+    </nav>
+
+    <header class="hero-mini">
+        <h1>Explore Properties</h1>
+    </header>
+
+    <main class="container">
+        <aside class="sidebar">
+            <div class="side-profile-card">
+                <img src="{{ url_for('static', filename='images/profiles/' ~ profile_image) if profile_image else url_for('static', filename='images/default.png') }}" alt="Profile">
+                <h3 style="color: var(--brown); margin-top: 10px;">{{ username }}</h3>
+            </div>
+            <ul>
+                <li><a href="{{ url_for('buyer_dashboard') }}"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                <li><a href="{{ url_for('exploring') }}" class="active"><i class="fas fa-search"></i> Find Homes</a></li>
+                <li><a href="{{ url_for('favorite') }}"><i class="fas fa-heart"></i> Saved Homes</a></li>
+                <li><a href="{{ url_for('buyer_profile') }}"><i class="fas fa-user-circle"></i> My Profile</a></li>
+                
+            </ul>
+        </aside>
+
+        <div class="explore-content">
+            <div class="search-box">
+                <div class="search-row">
+                    <input type="text" id="searchInput" placeholder="Search title or governorate..." onkeyup="filterProperties()">
+                    <button class="btn-search" onclick="filterProperties()">Search</button>
+                </div>
+                <div class="filters-row">
+                    <input type="text" id="wilayatFilter" placeholder="Wilayat (e.g. Seeb)" onkeyup="filterProperties()">
+                    <select id="typeFilter" onchange="filterProperties()">
+                        <option value="">All Types</option>
+                        <option value="Villa">Villa</option>
+                        <option value="Apartment">Apartment</option>
+                        <option value="House">House</option>
+                        <option value="Land">Land</option>
+                    </select>
+                    <select id="bedsFilter" onchange="filterProperties()">
+                        <option value="">Bedrooms</option>
+                        <option value="1">1 Bed</option>
+                        <option value="2">2 Beds</option>
+                        <option value="3">3 Beds</option>
+                        <option value="4">4+ Beds</option>
+                    </select>
+                    <select id="furnishingFilter" onchange="filterProperties()">
+                        <option value="">Furnishing</option>
+                        <option value="Furnished">Furnished</option>
+                        <option value="Unfurnished">Unfurnished</option>
+                    </select>
+                    <select id="priceFilter" onchange="filterProperties()">
+                        <option value="">Max Price</option>
+                        <option value="35000">35k OMR</option>
+                        <option value="70000">70k OMR</option>
+                        <option value="150000">150k OMR</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="homes-grid" id="propertiesContainer">
+                </div>
+        </div>
+    </main>
+
+     <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+                <p>Real Estate Vision</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{{ url_for('homepage') }}">Home Page</a></li>
+                    <li><a href="{{ url_for('terms') }}">Term</a></li>
+                    <li><a href="{{ url_for('predictions') }}">Market Predictions</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Contact Info</h4>
+                <ul>
+                    <li>Sultanate of Oman, Muscat</li>
+                    <li>📞 +968 95237331</li>
+                    <li>📧 realestatevision@gmail.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Real Estate Vision. All rights reserved.
+        </div>
+    </footer>
+
+
+    <script>
+        // Data from Flask
+        let properties = {{ properties | tojson | safe }};
+
+        function renderProperties(list) {
+    const container = document.getElementById('propertiesContainer');
+    if (list.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #888;">No properties found.</div>`;
+        return;
+    }
+    container.innerHTML = list.map(prop => `
+        <div class="home-card">
+            <button class="fav-btn" onclick="toggleFavorite(${prop.id})">
+                <i class="far fa-heart" id="icon-${prop.id}"></i>
+            </button>
+            <img src="/static/uploads/${prop.image_url || 'default.jpg'}" onerror="this.src='https://via.placeholder.com/300x180?text=No+Image'">
+            <div class="card-info">
+                <span style="font-size: 10px; background: #fff5ed; color: #C65D20; padding: 2px 8px; border-radius: 5px; font-weight: 700;">${prop.property_type || 'Property'}</span>
+                <h3 style="margin-top:5px; font-size: 18px; color: var(--brown);">${prop.title}</h3>
+                <p style="font-size:12px; color:#999; margin: 5px 0;">
+                    <i class="fas fa-map-marker-alt"></i> ${prop.governorate}, ${prop.wilayat || ''}
+                </p>
+                <p style="font-size:12px; color:#5C4033; font-weight:600; margin-bottom: 5px;">
+                    <i class="fas fa-phone"></i> ${prop.phone || 'N/A'}
+                </p>
+                <span class="price">${Number(prop.price).toLocaleString()} OMR</span>
+                <div class="specs">
+                    <span><i class="fas fa-bed"></i> ${prop.bedrooms || 0}</span>
+                    <span><i class="fas fa-bath"></i> ${prop.bathrooms || 0}</span>
+                    <span><i class="fas fa-expand-arrows-alt"></i> ${prop.area || 0}m²</span>
+                </div>
+                </div>
+        </div>
+    `).join('');
+}
+
+        function filterProperties() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const wilayat = document.getElementById('wilayatFilter').value.toLowerCase();
+            const type = document.getElementById('typeFilter').value;
+            const beds = document.getElementById('bedsFilter').value;
+            const furnishing = document.getElementById('furnishingFilter').value;
+            const maxPrice = document.getElementById('priceFilter').value;
+
+            const filtered = properties.filter(p => {
+                const matchesSearch = p.title.toLowerCase().includes(search) || p.city.toLowerCase().includes(search);
+                const matchesWilayat = p.wilayat ? p.wilayat.toLowerCase().includes(wilayat) : true;
+                const matchesType = !type || p.property_type === type;
+                const matchesBeds = !beds || (beds === "4" ? p.bedrooms >= 4 : p.bedrooms == beds);
+                const matchesFurnishing = !furnishing || p.furnishing === furnishing;
+                const matchesPrice = !maxPrice || Number(p.price) <= Number(maxPrice);
+
+                return matchesSearch && matchesWilayat && matchesType && matchesBeds && matchesFurnishing && matchesPrice;
+            });
+            renderProperties(filtered);
+        }
+
+        function toggleFavorite(propId) {
+            fetch('/add_to_favorite/' + propId, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById(`icon-${propId}`).className = 'fas fa-heart';
+                    alert("Saved to Favorites! ❤️");
+                } else { alert(data.message); }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => renderProperties(properties));
+    </script>
+</body>
+</html>

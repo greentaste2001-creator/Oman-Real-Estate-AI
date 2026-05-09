@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Real Estate Vision</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    /* -------------------- Colors -------------------- */
+    :root {
+      --dark-orange: #C65D20;
+      --light-beige: #F5E9D3;
+      --brown: #5C4033;
+      --soft-yellow: #F8DFA8;
+    }
+
+    /* -------------------- Global Styles -------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    body {
+      background: url('images/backg1.jpg') center/cover no-repeat fixed;
+      position: relative;
+    }
+
+    /* -------------------- Navbar -------------------- */
+    .navbar {
+      width: 100%;
+      background: linear-gradient(to right, var(--brown), var(--dark-orange));
+      padding: 15px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .navbar .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: #ffe9c6;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+    .nav-links a:hover {
+      color: white;
+    }
+    .buttons .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+      margin-left: 10px;
+    }
+    .login, .signup {
+      background: var(--soft-yellow);
+      color: var(--brown);
+    }
+    .login:hover, .signup:hover {
+      background: #fff2c4;
+    }
+
+    /* -------------------- Content -------------------- */
+    .content {
+      position: relative;
+      max-width: 700px;
+      margin: 140px auto 60px; 
+      padding: 40px 20px;
+      text-align: center;
+      border-radius: 20px;
+    }
+
+    
+    .content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4); 
+      border-radius: 20px;
+      z-index: 0;
+    }
+
+    
+    .content > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: #ffcc80;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+    }
+
+    p {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      color: #ffe0b2;
+      margin-bottom: 40px;
+    }
+
+    .register-box {
+      background: rgba(255, 224, 178, 0.15);
+      width: 360px;
+      padding: 35px 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(5px);
+      margin: 0 auto;
+      transition: transform 0.3s ease;
+    }
+    .register-box:hover {
+      transform: translateY(-5px);
+    }
+
+    label {
+      font-weight: bold;
+      color: #ffe0b2;
+      font-size: 1.2rem;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .options button {
+      background: #8d6e63;
+      color: #fff;
+      border: none;
+      padding: 12px 0;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 100%;
+      font-weight: 500;
+    }
+    .options button:hover {
+      background: #ff7043;
+      color: #fff;
+    }
+
+    .admin-login {
+      background: transparent;
+      color: #ffcc80;
+      border: 2px solid #ffcc80;
+      padding: 10px 0;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 100%;
+      font-weight: 500;
+      margin-top: 15px;
+    }
+    .admin-login:hover {
+      background: #ffcc80;
+      color: #3e2723;
+    }
+
+    /* -------------------- Footer -------------------- */
+    footer {
+      background-color: #1f1f1f;
+      color: #eaeaea;
+      padding: 55px 70px 25px;
+      font-size: 16px;
+    }
+
+    .footer-container {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 50px;
+    }
+
+    .footer-left img {
+      width: 140px;
+      margin-bottom: 12px;
+    }
+
+    .footer-left p {
+      font-size: 17px;
+      max-width: 300px;
+      line-height: 1.6;
+    }
+
+    .footer-social a img {
+      width: 24px;
+      transition: transform 0.3s;
+    }
+    .footer-social a:hover img {
+      transform: scale(1.15);
+    }
+
+    .footer-column h4 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #ffffff;
+    }
+
+    .footer-column ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .footer-column ul li {
+      margin-bottom: 9px;
+    }
+
+    .footer-column ul li a {
+      text-decoration: none;
+      color: #bfbfbf;
+      transition: color 0.3s;
+      font-size: 16px;
+    }
+
+    .footer-column ul li a:hover {
+      color: #ffffff;
+    }
+
+    .footer-divider {
+      border-top: 1px solid #444;
+      margin: 25px 0 10px;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 15px;
+      color: #999;
+    }
+
+    @media (max-width: 500px) {
+      h1 { font-size: 2.2rem; }
+      p { font-size: 1rem; }
+      .register-box { width: 90%; padding: 30px 20px; }
+      .navbar { flex-direction: column; gap: 10px; padding: 10px 20px; }
+      .nav-links { flex-direction: column; gap: 10px; }
+      .buttons { display: flex; gap: 10px; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+      <div class="logo">Real Estate Vision</div>
+
+      <ul class="nav-links">
+          <li><a href="{{ url_for('homepage') }}">Home</a></li>
+        <li><a href="{{ url_for('predictions') }}">Predictions</a></li>
+        <li><a href="{{ url_for('terms') }}">Term</a></li>
+        <li><a href="{{ url_for('register') }}" class="active">Register</a></li>
+          
+      </ul>
+
+      
+  </nav>
+
+  <!-- Main Content -->
+  <div class="content">
+
+    <h1>Real Estate Vision</h1>
+
+    <p>
+      Discover, analyze, and predict home values with the power of Artificial Intelligence.  
+      Explore property listings, understand market trends, and predict accurate house prices with confidence.
+    </p>
+
+    <div class="register-box">
+     <label>Who are you?</label>
+       <div class="options">
+        <button onclick="location.href='{{ url_for('login') }}?type=seller'">Seller</button>
+        <button onclick="location.href='{{ url_for('login') }}?type=buyer'">Buyer</button>
+        <button class="admin-login" onclick="location.href='{{ url_for('login') }}?type=admin'">
+           Log in as Admin
+        </button>
+       </div>
+    </div>
+
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+<div class="footer-container">
+  <div class="footer-left">
+    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+    <p>Real Estate Vision</p>
+    <div class="footer-social">
+      <a href="#"><img src="{{ url_for('static', filename='images/facebook.png')}}" alt="Facebook"></a>
+      <a href="#"><img src="{{ url_for('static', filename='images/twitter.png')}}" alt="Twitter"></a>
+      <a href="#"><img src="{{ url_for('static', filename='images/instagram.png')}}" alt="Instagram"></a>
+      <a href="#"><img src="{{ url_for('static', filename='images/linkedin.png')}}" alt="Linkedin"></a>
+    </div>
+  </div>
+
+  <div class="footer-column">
+    <h4>Quick Links</h4>
+    <ul>
+      <li><a href="{{ url_for('homepage') }}">Home</a></li>
+        <li><a href="{{ url_for('homepage') }}">Home</a></li>
+                <li><a href="{{ url_for('predictions') }}">Predictions</a></li>
+                <li><a href="{{ url_for('terms') }}">Term</a></li>
+      
+    </ul>
+  </div>
+
+  
+
+  <div class="footer-column">
+    <h4>Follow & Contact</h4>
+    <ul>
+      <li>Sultanate of Oman</li>
+      <li>📞 95237331</li>
+      <li>📧 realestatevision@gmail.com</li>
+      <li>🕐 Mon-Fri: 9AM - 5PM</li>
+    </ul>
+  </div>
+</div>
+
+<div class="footer-divider"></div>
+
+<div class="footer-bottom">
+  <p>© 2025 Real Estate Vision. All rights reserved.</p>
+</div>
+</footer>
+
+</body>
+</html>
+
+
+
+
+

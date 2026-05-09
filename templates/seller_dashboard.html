@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Dashboard - Real Estate Vision</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Urbanist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(to right, #5C4033, #C65D20);
+            --brown: #5C4033;
+            --orange: #C65D20;
+            --bg-light: #f4f7f6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Urbanist', sans-serif; }
+        
+        body { 
+            background: var(--bg-light); 
+            background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); 
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* -------------------- Navbar -------------------- */
+        .navbar {
+    width: 100%;
+    background: var(--primary-gradient);
+    padding: 15px 50px;
+    display: flex;
+    justify-content: flex-end; /* يجعل العناصر (مثل زر الخروج) تذهب لليمين */
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(149, 38, 38, 0.1);
+}
+        .navbar .logo { 
+    font-size: 24px; 
+    font-weight: 700; 
+    color: white; 
+    text-decoration: none;
+    position: absolute; /* مفتاح التوسيط */
+    left: 50%;
+    transform: translateX(-50%);
+    }
+        .nav-links { list-style: none; display: flex; gap: 25px; }
+        .nav-links a { text-decoration: none; color: #ffe9c6; font-weight: 500; transition: 0.3s; }
+        .nav-links a:hover { color: white; }
+        .btn-logout-nav {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 20px;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        /* -------------------- Hero Section -------------------- */
+         .seller-hero {
+            height: 300px; 
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), 
+                        url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .seller-hero h1 { font-family: 'Playfair Display', serif; font-size: 35px; }
+
+        /* -------------------- Main Layout -------------------- */
+        .seller-container { 
+            display: flex; 
+            padding: 0 50px 60px; 
+            margin-top: -40px; 
+            gap: 30px; 
+            flex: 1; 
+        }
+
+        /* Sidebar (كما في الصورة) */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 30px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        .profile-card { text-align: center; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        .profile-card img { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--orange); padding: 3px; }
+        .profile-card h3 { margin-top: 10px; color: var(--brown); font-size: 18px; }
+        .profile-card p { color: #999; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+
+        .sidebar ul { list-style: none; }
+        .sidebar ul li { margin-bottom: 10px; }
+        .sidebar ul li a { 
+            text-decoration: none; 
+            color: #555; 
+            padding: 12px 15px; 
+            display: flex; 
+            align-items: center;
+            border-radius: 10px; 
+            font-weight: 600; 
+            transition: 0.3s;
+        }
+        .sidebar ul li a i { margin-right: 15px; color: var(--orange); font-size: 18px; width: 25px; text-align: center; }
+        .sidebar ul li a:hover, .sidebar ul li a.active { background: #fff5ed; color: var(--orange); }
+
+        /* Dashboard Content (Centered Stats) */
+        .dashboard-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* توسيط عمودي كامل */
+            padding-top: 50px; /* دفع المحتوى للأسفل قليلاً ليظهر الترحيب بوضوح */
+        }
+
+        .welcome-header { 
+            text-align: center; 
+            margin-bottom: 60px; /* مسافة كبيرة تحت الترحيب */
+        }
+        .welcome-header h1 { 
+            font-family: 'Playfair Display', serif; 
+            font-size: 48px; 
+            color: var(--brown); 
+            margin-bottom: 15px;
+        }
+        .welcome-header p { 
+            color: #888; 
+            font-size: 19px; 
+            letter-spacing: 1px; 
+        }
+
+        .centered-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .big-stat-card {
+            background: white;
+            padding: 60px 30px; /* زيادة حجم البطاقات */
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.06);
+            transition: 0.4s;
+            border: 1px solid #eee;
+        }
+
+        .big-stat-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--orange);
+        }
+
+        .big-stat-card i { font-size: 50px; color: var(--orange); margin-bottom: 25px; display: block; }
+        .big-stat-card h3 { font-size: 55px; color: var(--brown); margin-bottom: 10px; font-weight: 800; }
+        .big-stat-card p { font-size: 16px; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* تم حذف زر Post New Listing من هنا */
+
+        /* -------------------- Footer -------------------- */
+        footer { background-color: #1a1a1a; color: #eaeaea; padding: 80px 80px 30px; margin-top: auto; }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 60px; border-bottom: 1px solid #333; padding-bottom: 50px; }
+        .footer-brand { flex: 1.5; min-width: 250px; }
+        .footer-brand img { width: 180px; margin-bottom: 20px; }
+        .footer-brand p { font-size: 24px; margin-bottom: 20px; color: white; font-weight: 700; }
+        .social-icons a { color: #888; font-size: 28px; margin-right: 25px; transition: 0.3s; }
+        .social-icons a:hover { color: var(--orange); }
+        
+        .footer-col { flex: 1; min-width: 200px; }
+        .footer-col h4 { color: white; margin-bottom: 30px; font-size: 22px; font-weight: 700; text-transform: uppercase; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 15px; }
+        .footer-col ul li a { color: #aaa; text-decoration: none; font-size: 18px; transition: 0.3s; }
+        .footer-col ul li a:hover { color: white; padding-left: 5px; }
+        
+        .footer-bottom { text-align: center; padding: 30px 0; color: #666; font-size: 16px; font-weight: 500; }
+
+        @media (max-width: 900px) {
+            .seller-container { flex-direction: column; padding: 0 20px; }
+            .sidebar { width: 100%; }
+            .centered-stats { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="{{ url_for('homepage') }}" class="logo">Real Estate Vision</a>
+        
+        <a href="{{ url_for('logout') }}" class="btn-logout-nav">Logout</a>
+    </nav>
+
+    <header class="seller-hero">
+        <h1>Seller Dashboard</h1>
+        <p>Monitor your progress and manage your assets</p>
+    </header>
+
+    <main class="seller-container">
+        <aside class="sidebar">
+            <div class="profile-card">
+                <img src="{{ url_for('static', filename='images/profiles/' ~ profile_image) }}" alt="Profile">
+                <h3>{{ username }}</h3>
+                <p>OFFICIAL SELLER</p>
+            </div>
+            <ul>
+                <li><a href="{{ url_for('seller_dashboard') }}" class="active"><i class="fas fa-th-large"></i> Overview</a></li>
+                <li><a href="{{ url_for('add_property') }}"><i class="fas fa-plus-circle"></i> Add Property</a></li>
+                <li><a href="{{ url_for('my_listings') }}"><i class="fas fa-layer-group"></i> My Listings</a></li>
+                <li><a href="{{ url_for('profile') }}"><i class="fas fa-user-circle"></i> MY Profile</a></li>
+            </ul>
+        </aside>
+
+        <div class="dashboard-content">
+            
+            <div class="welcome-header">
+                <h1>Welcome, {{ username }} 👋</h1>
+                <p>Here is what's happening with your properties today</p>
+            </div>
+
+            <div class="centered-stats">
+                <div class="big-stat-card">
+                    <i class="fas fa-house-circle-check"></i>
+                    <h3>{{ total_properties }}</h3>
+                    <p>Total Properties</p>
+                </div>
+
+                
+
+                <div class="big-stat-card">
+                    <i class="fas fa-heart"></i>
+                    <h3>{{ total_favorites }}</h3>
+                    <p>Total Likes</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+                <p>Real Estate Vision</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{{ url_for('homepage') }}">Home Page</a></li>
+                    <li><a href="{{ url_for('terms') }}">Term</a></li>
+                    <li><a href="{{ url_for('predictions') }}">Market Predictions</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Contact Info</h4>
+                <ul>
+                    <li>Sultanate of Oman, Muscat</li>
+                    <li>📞 +968 95237331</li>
+                    <li>📧 realestatevision@gmail.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Real Estate Vision. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+</html>

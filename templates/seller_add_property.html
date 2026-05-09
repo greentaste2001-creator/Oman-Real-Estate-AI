@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Property - Real Estate Vision</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Urbanist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(to right, #5C4033, #C65D20);
+            --brown: #5C4033;
+            --orange: #C65D20;
+            --bg-light: #f4f7f6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Urbanist', sans-serif; }
+        
+        body { 
+            background: var(--bg-light); 
+            background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ========== NAVBAR (تم حذف الروابط وبقاء اللوجو واللوج أوت فقط) ========== */
+        .navbar {
+    width: 100%;
+    background: var(--primary-gradient);
+    padding: 15px 50px;
+    display: flex;
+    justify-content: flex-end; /* يجعل العناصر (مثل زر الخروج) تذهب لليمين */
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+    .navbar .logo { 
+    font-size: 24px; 
+    font-weight: 700; 
+    color: white; 
+    text-decoration: none;
+    position: absolute; /* مفتاح التوسيط */
+    left: 50%;
+    transform: translateX(-50%);
+    }
+    .btn-logout-nav {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 20px;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        /* ========== HERO SECTION (تغيير الصورة وزيادة الارتفاع) ========== */
+        .seller-hero {
+            height: 300px; 
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)), 
+                        url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .seller-hero h1 { font-family: 'Playfair Display', serif; font-size: 48px; margin-bottom: 10px; }
+        .seller-hero p { font-size: 18px; opacity: 0.9; font-weight: 300; }
+
+        /* ========== MAIN LAYOUT ========== */
+        .seller-container { 
+            display: flex; 
+            padding: 0 50px 60px; 
+            margin-top: -60px; 
+            gap: 30px; 
+            flex: 1; 
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 30px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        .profile-card { text-align: center; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        .profile-card img { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid var(--orange); padding: 3px; }
+        .profile-card h3 { margin-top: 10px; color: var(--brown); font-size: 18px; }
+        
+        .sidebar ul { list-style: none; }
+        .sidebar ul li a { 
+            text-decoration: none; color: #555; padding: 12px 15px; display: flex; align-items: center; border-radius: 10px; font-weight: 600; transition: 0.3s;
+        }
+        .sidebar ul li a i { margin-right: 12px; color: var(--orange); width: 20px; text-align: center; }
+        .sidebar ul li a:hover, .sidebar ul li a.active { background: #fff5ed; color: var(--orange); }
+
+        /* Form Content */
+        .dashboard-content { flex: 1; }
+        .form-card {
+            background: white;
+            padding: 45px;
+            border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+        }
+        .form-card h2 { font-family: 'Playfair Display', serif; color: var(--brown); margin-bottom: 35px; font-size: 30px; text-align: center; }
+
+        .property-form { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full-width { grid-column: span 2; }
+        
+        .form-group label { font-weight: 700; color: #555; margin-bottom: 10px; font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 14px 15px; border: 1.5px solid #eee; border-radius: 12px; font-size: 15px; transition: 0.3s; background: #fdfdfd;
+        }
+        .form-group input:focus { border-color: var(--orange); outline: none; }
+
+        .submit-btn {
+            grid-column: span 2; margin-top: 25px; background: var(--primary-gradient); color: white; border: none; padding: 20px; border-radius: 15px; font-size: 19px; font-weight: 700; cursor: pointer; transition: 0.4s;
+        }
+        .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(198, 93, 32, 0.4); }
+
+        /* -------------------- Footer -------------------- */
+        footer { background-color: #1a1a1a; color: #eaeaea; padding: 80px 80px 30px; margin-top: auto; }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 60px; border-bottom: 1px solid #333; padding-bottom: 50px; }
+        .footer-brand { flex: 1.5; min-width: 250px; }
+        .footer-brand img { width: 180px; margin-bottom: 20px; }
+        .footer-brand p { font-size: 24px; margin-bottom: 20px; color: white; font-weight: 700; }
+        .social-icons a { color: #888; font-size: 28px; margin-right: 25px; transition: 0.3s; }
+        .social-icons a:hover { color: var(--orange); }
+        
+        .footer-col { flex: 1; min-width: 200px; }
+        .footer-col h4 { color: white; margin-bottom: 30px; font-size: 22px; font-weight: 700; text-transform: uppercase; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 15px; }
+        .footer-col ul li a { color: #aaa; text-decoration: none; font-size: 18px; transition: 0.3s; }
+        .footer-col ul li a:hover { color: white; padding-left: 5px; }
+        
+        .footer-bottom { text-align: center; padding: 10px 0; color: #666; font-size: 16px; font-weight: 500; }
+
+        @media (max-width: 900px) {
+            .seller-container { flex-direction: column; padding: 0 20px; }
+            .sidebar { width: 100%; }
+            .centered-stats { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="logo">Real Estate Vision</a>
+        <a href="{{ url_for('logout') }}" class="btn-logout-nav">Logout</a>
+    </nav>
+
+    <header class="seller-hero">
+        <h1>Add New Property</h1>
+        <p>Fill in the details below to list your property on our platform</p>
+    </header>
+
+    <main class="seller-container">
+        <aside class="sidebar">
+            <div class="profile-card">
+                <img src="{{ url_for('static', filename='images/profiles/' ~ profile_image) }}" alt="Profile">
+                <h3>{{ username }}</h3>
+            </div>
+            <ul>
+                <li><a href="{{ url_for('seller_dashboard') }}"><i class="fas fa-th-large"></i> Overview</a></li>
+                <li><a href="{{ url_for('add_property') }}" class="active"><i class="fas fa-plus-circle"></i> Add Property</a></li>
+                <li><a href="{{ url_for('my_listings') }}"><i class="fas fa-layer-group"></i> My Listings</a></li>
+                <li><a href="{{ url_for('profile') }}"><i class="fas fa-user-circle"></i> My Profile</a></li>
+            </ul>
+        </aside>
+
+        <div class="dashboard-content">
+            <div class="form-card">
+                <h2>Listing Information</h2>
+                <form class="property-form" method="POST" action="{{ url_for('add_property') }}" enctype="multipart/form-data">
+                    
+                    <div class="form-group full-width">
+                        <label>Property Title</label>
+                        <input type="text" name="title" placeholder="e.g. Modern Villa with Pool" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Governorate</label>
+                        <input type="text" name="governorate" placeholder="e.g. Muscat" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Wilayat</label>
+                        <input type="text" name="wilayat" placeholder="e.g. Al Khoud" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Property Type</label>
+                        <select name="property_type" required>
+                            <option value="">Select type</option>
+                            <option value="Villa">Villa</option>
+                            <option value="Apartment">Apartment</option>
+                            <option value="Townhouse">Townhouse</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Surface Area (m²)</label>
+                        <input type="number" name="surface_area" placeholder="450" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Bedrooms</label>
+                        <input type="number" name="bedrooms" placeholder="4" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Bathrooms</label>
+                        <input type="number" name="bathrooms" placeholder="3" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Floor</label>
+                        <input type="number" name="floor" placeholder="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Building Age (Years)</label>
+                        <input type="number" name="building_age" placeholder="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Furnishing</label>
+                        <select name="furnishing" required>
+                            <option value="Unfurnished">Unfurnished</option>
+                            <option value="Furnished">Furnished</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" name="phone" placeholder="+968" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Price (OMR)</label>
+                        <input type="number" name="price" placeholder="120000" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Property Images</label>
+                        <input type="file" name="images" multiple style="border: 2px dashed #ccc; padding: 30px; background: #fff; cursor: pointer;">
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-plus-circle" style="margin-right: 10px;"></i> Publish Listing
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+     <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+                <p>Real Estate Vision</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{{ url_for('homepage') }}">Home Page</a></li>
+                   <li><a href="{{ url_for('terms') }}">Term</a></li>
+                    <li><a href="{{ url_for('predictions') }}">Market Predictions</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Contact Info</h4>
+                <ul>
+                    <li>Sultanate of Oman, Muscat</li>
+                    <li>📞 +968 95237331</li>
+                    <li>📧 realestatevision@gmail.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Real Estate Vision. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+</html>

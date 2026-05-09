@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Dashboard - Real Estate Vision</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Urbanist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(to right, #5C4033, #C65D20);
+            --brown: #5C4033;
+            --orange: #C65D20;
+            --bg-light: #f4f7f6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Urbanist', sans-serif; }
+        
+        body { 
+            background: var(--bg-light); 
+            background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ========== NAVBAR ========== */
+        .navbar {
+            width: 100%;
+            background: var(--primary-gradient);
+            padding: 15px 50px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .navbar .logo { 
+            font-size: 24px; font-weight: 700; color: white; text-decoration: none;
+            position: absolute; left: 50%; transform: translateX(-50%);
+        }
+        .btn-logout-nav {
+            color: white; text-decoration: none; font-weight: 600; padding: 8px 20px;
+            border: 1px solid rgba(255,255,255,0.4); border-radius: 8px; transition: 0.3s;
+        }
+
+        /* ========== HERO SECTION ========== */
+        .buyer-hero {
+            height: 200px; 
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)), 
+                        url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1920&q=80') center/cover;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .buyer-hero h1 { font-family: 'Playfair Display', serif; font-size: 38px; }
+
+        /* ========== MAIN LAYOUT ========== */
+        .container { 
+            display: flex; padding: 0 50px 60px; margin-top: -40px; gap: 30px; flex: 1; 
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px; background: white; padding: 30px 20px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); height: fit-content;
+        }
+        .side-profile-card { text-align: center; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        .side-profile-card img { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid var(--orange); padding: 3px; }
+        .side-profile-card h3 { margin-top: 10px; color: var(--brown); font-size: 18px; }
+        
+        .sidebar ul { list-style: none; }
+        .sidebar ul li a { 
+            text-decoration: none; color: #555; padding: 12px 15px; display: flex; align-items: center; border-radius: 10px; font-weight: 600; transition: 0.3s;
+        }
+        .sidebar ul li a i { margin-right: 12px; color: var(--orange); width: 20px; text-align: center; }
+        .sidebar ul li a:hover, .sidebar ul li a.active { background: #fff5ed; color: var(--orange); }
+
+        /* Content */
+       /* تعديل حاوية المحتوى لتتوسط الصفحة */
+.dashboard-content { 
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* تبدأ من الأعلى قليلاً */
+    align-items: center; /* توسيط أفقي */
+    padding-top: 50px;
+}
+
+/* جعل شبكة الإحصائيات مرنة وتتوسط المساحة */
+.stats-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    gap: 30px; 
+    width: 100%;
+    max-width: 800px; /* تحديد عرض أقصى لتبدو البطاقات متناسقة */
+    margin: 0 auto;
+}
+
+/* تكبير بطاقة الإحصائيات قليلاً لتملأ الفراغ */
+.stat-card {
+    background: white; 
+    padding: 40px; 
+    border-radius: 25px; 
+    display: flex; 
+    flex-direction: column; /* جعل الأيقونة فوق النص */
+    align-items: center; 
+    text-align: center;
+    gap: 15px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.07); 
+    transition: 0.4s;
+}
+
+.stat-icon { 
+    width: 80px; 
+    height: 80px; 
+    font-size: 32px; 
+    border-radius: 20px;
+}
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-icon { width: 60px; height: 60px; border-radius: 15px; background: #fff5ed; display: flex; align-items: center; justify-content: center; color: var(--orange); font-size: 24px; }
+        .stat-info h3 { font-size: 28px; color: var(--brown); }
+        .stat-info p { color: #888; font-weight: 500; }
+
+        /* Table Card */
+        .table-card {
+            background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 30px;
+        }
+        .table-card h2 { font-family: 'Playfair Display', serif; color: var(--brown); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        table th { text-align: left; padding: 15px; background: #fdfdfd; color: #888; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #eee; }
+        table td { padding: 20px 15px; border-bottom: 1px solid #f9f9f9; color: var(--brown); font-weight: 600; }
+
+        .btn-action {
+            padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: 700; transition: 0.3s; font-size: 13px;
+        }
+        .btn-fav { background: #fff5ed; color: var(--orange); }
+        .btn-fav:hover { background: var(--orange); color: white; }
+        .btn-remove { background: #fff1f1; color: #ff5c5c; }
+        .btn-remove:hover { background: #ff5c5c; color: white; }
+
+        /* ========== FOOTER ========== */
+        footer { background-color: #1a1a1a; color: #eaeaea; padding: 80px 80px 30px; margin-top: auto; }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 60px; border-bottom: 1px solid #333; padding-bottom: 50px; }
+        .footer-brand { flex: 1.5; min-width: 250px; }
+        .footer-brand img { width: 180px; margin-bottom: 20px; }
+        .footer-brand p { font-size: 24px; margin-bottom: 20px; color: white; font-weight: 700; }
+        .social-icons a { color: #888; font-size: 28px; margin-right: 25px; transition: 0.3s; }
+        .social-icons a:hover { color: var(--orange); }
+        
+        .footer-col { flex: 1; min-width: 200px; }
+        .footer-col h4 { color: white; margin-bottom: 30px; font-size: 22px; font-weight: 700; text-transform: uppercase; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 15px; }
+        .footer-col ul li a { color: #aaa; text-decoration: none; font-size: 18px; transition: 0.3s; }
+        .footer-col ul li a:hover { color: white; padding-left: 5px; }
+        
+        .footer-bottom { text-align: center; padding: 30px 0; color: #666; font-size: 16px; font-weight: 500; }
+
+        @media (max-width: 900px) {
+            .container { flex-direction: column; padding: 0 20px; }
+            .sidebar { width: 100%; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="logo">Real Estate Vision</a>
+        <a href="{{ url_for('logout') }}" class="btn-logout-nav">Logout</a>
+    </nav>
+
+    <header class="buyer-hero">
+        <h1>Welcome Back, {{ username }} 👋</h1>
+    </header>
+
+    <main class="container">
+        <aside class="sidebar">
+            <div class="side-profile-card">
+                <img src="{{ url_for('static', filename='images/profiles/' ~ profile_image) if profile_image else url_for('static', filename='images/default.png') }}" alt="Profile">
+                <h3>{{ username }}</h3>
+            </div>
+            <ul>
+                <li><a href="{{ url_for('buyer_dashboard') }}" class="active"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                <li><a href="{{ url_for('exploring') }}"><i class="fas fa-search"></i> Find Homes</a></li>
+                <li><a href="{{ url_for('favorite') }}"><i class="fas fa-heart"></i> Saved Homes</a></li>
+                <li><a href="{{ url_for('buyer_profile') }}"><i class="fas fa-user-circle"></i> My Profile</a></li>
+                
+            </ul>
+        </aside>
+
+        <div class="dashboard-content">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-building"></i></div>
+            <div class="stat-info">
+                <h3>{{ available_count }}</h3>
+                <p>Market Listings</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-heart"></i></div>
+            <div class="stat-info">
+                <h3>{{ favorite_count }}</h3>
+                <p>Saved Favorites</p>
+            </div>
+        </div>
+    </div>
+</div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+                <p>Real Estate Vision</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{{ url_for('homepage') }}">Home Page</a></li>
+                    <li><a href="{{ url_for('terms') }}">Term</a></li>
+                    <li><a href="{{ url_for('predictions') }}">Market Predictions</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Contact Info</h4>
+                <ul>
+                    <li>Sultanate of Oman, Muscat</li>
+                    <li>📞 +968 95237331</li>
+                    <li>📧 realestatevision@gmail.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Real Estate Vision. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+</html>

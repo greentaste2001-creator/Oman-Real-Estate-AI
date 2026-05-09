@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In - Real Estate Vision</title>
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+  <h1>Log In</h1>
+
+  <form action="login.php" method="POST">
+    <input type="email" name="email" placeholder="Enter your email" required>
+    <input type="password" name="password" placeholder="Enter your password" required>
+    <input type="hidden" name="user_type" id="user_type">
+    <button type="submit">Log In</button>
+  </form>
+
+  <script>
+    // قراءة نوع المستخدم من الرابط (buyer أو seller)
+    const params = new URLSearchParams(window.location.search);
+    const type = params.get('type');
+    document.getElementById("user_type").value = type;
+  </script>
+
+</body>
+</html>
+

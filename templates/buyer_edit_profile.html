@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - Real Estate Vision</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Urbanist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(to right, #5C4033, #C65D20);
+            --brown: #5C4033;
+            --orange: #C65D20;
+            --bg-light: #f4f7f6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Urbanist', sans-serif; }
+        
+        body { 
+            background: var(--bg-light); 
+            background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ========== NAVBAR ========== */
+        .navbar {
+            width: 100%;
+            background: var(--primary-gradient);
+            padding: 15px 50px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .navbar .logo { 
+            font-size: 24px; font-weight: 700; color: white; text-decoration: none;
+            position: absolute; left: 50%; transform: translateX(-50%);
+        }
+        .btn-logout-nav {
+            color: white; text-decoration: none; font-weight: 600; padding: 8px 20px;
+            border: 1px solid rgba(255,255,255,0.4); border-radius: 8px; transition: 0.3s;
+        }
+        .btn-logout-nav:hover { background: white; color: var(--orange); }
+
+        /* ========== HERO BANNER ========== */
+        .hero-banner {
+            height: 150px; 
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1920&q=80') center/cover;
+            display: flex; justify-content: center; align-items: center;
+            color: white;
+        }
+        .hero-banner h1 { font-family: 'Playfair Display', serif; font-size: 32px; }
+
+        /* ========== MAIN LAYOUT ========== */
+        .main-container { 
+            display: flex; padding: 0 50px 60px; margin-top: -40px; gap: 30px; flex: 1; 
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px; background: white; padding: 30px 20px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); height: fit-content;
+        }
+        .side-profile-card { text-align: center; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        .side-profile-card img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--orange); padding: 2px; }
+        .side-profile-card h3 { margin-top: 10px; color: var(--brown); font-size: 18px; }
+        
+        .sidebar ul { list-style: none; }
+        .sidebar ul li a { 
+            text-decoration: none; color: #555; padding: 12px 15px; display: flex; align-items: center; border-radius: 10px; font-weight: 600; transition: 0.3s;
+        }
+        .sidebar ul li a i { margin-right: 12px; color: var(--orange); width: 20px; text-align: center; }
+        .sidebar ul li a:hover, .sidebar ul li a.active { background: #fff5ed; color: var(--orange); }
+
+        /* Edit Form Card */
+        .form-content { flex: 1; display: flex; justify-content: center; }
+        .edit-card {
+            background: white; width: 100%; max-width: 650px; padding: 40px; border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        }
+        .edit-card h2 { font-family: 'Playfair Display', serif; color: var(--brown); margin-bottom: 30px; text-align: center; font-size: 28px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 700; color: var(--brown); font-size: 14px; text-transform: uppercase; }
+        .form-group input {
+            width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid #e0e0e0;
+            background: #fdfdfd; font-size: 15px; transition: 0.3s; color: #333;
+        }
+        .form-group input:focus { border-color: var(--orange); outline: none; box-shadow: 0 0 0 4px rgba(198, 93, 32, 0.1); }
+        
+        /* Custom File Input */
+        .file-input-wrapper {
+            position: relative; overflow: hidden; display: inline-block; width: 100%;
+        }
+        .file-input-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
+        .btn-file {
+            display: block; background: #fff5ed; color: var(--orange); border: 2px dashed var(--orange);
+            padding: 15px; text-align: center; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s;
+        }
+        .btn-file:hover { background: #fee7d6; }
+
+        .submit-btn {
+            width: 100%; padding: 15px; margin-top: 10px; border: none; border-radius: 12px;
+            background: var(--primary-gradient); color: white; font-weight: 700; font-size: 16px;
+            cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(198, 93, 32, 0.2);
+        }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(198, 93, 32, 0.3); }
+
+        /* ========== FOOTER ========== */
+        footer { background-color: #1a1a1a; color: #eaeaea; padding: 80px 80px 30px; margin-top: auto; }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 60px; border-bottom: 1px solid #333; padding-bottom: 50px; }
+        .footer-brand { flex: 1.5; min-width: 250px; }
+        .footer-brand img { width: 180px; margin-bottom: 20px; }
+        .footer-brand p { font-size: 24px; margin-bottom: 20px; color: white; font-weight: 700; }
+        .social-icons a { color: #888; font-size: 28px; margin-right: 25px; transition: 0.3s; }
+        .social-icons a:hover { color: var(--orange); }
+        
+        .footer-col { flex: 1; min-width: 200px; }
+        .footer-col h4 { color: white; margin-bottom: 30px; font-size: 22px; font-weight: 700; text-transform: uppercase; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 15px; }
+        .footer-col ul li a { color: #aaa; text-decoration: none; font-size: 18px; transition: 0.3s; }
+        .footer-col ul li a:hover { color: white; padding-left: 5px; }
+        
+        .footer-bottom { text-align: center; padding: 30px 0; color: #666; font-size: 16px; font-weight: 500; }
+
+        @media (max-width: 900px) {
+            .main-container { flex-direction: column; padding: 0 20px; }
+            .sidebar { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="logo">Real Estate Vision</a>
+        <a href="{{ url_for('logout') }}" class="btn-logout-nav">Logout</a>
+    </nav>
+
+    <header class="hero-banner">
+        <h1>Edit Your Profile</h1>
+    </header>
+
+    <main class="main-container">
+        <aside class="sidebar">
+            <div class="side-profile-card">
+                <img src="{{ url_for('static', filename='images/profiles/' + user.profile_image) if user.profile_image else url_for('static', filename='images/default.png') }}" alt="User">
+                <h3>{{ user.username }}</h3>
+            </div>
+            <ul>
+                <li><a href="{{ url_for('buyer_dashboard') }}"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                <li><a href="{{ url_for('exploring') }}"><i class="fas fa-search"></i> Find Homes</a></li>
+                <li><a href="{{ url_for('favorite') }}" class="active"><i class="fas fa-heart"></i> Saved Homes</a></li>
+                <li><a href="{{ url_for('buyer_profile') }}"><i class="fas fa-user-circle"></i> My Profile</a></li>
+            </ul>
+        </aside>
+
+        <div class="form-content">
+            <div class="edit-card">
+                <h2>Update Information</h2>
+                
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" value="{{ user.username }}" placeholder="Enter your username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" name="email" value="{{ user.email }}" placeholder="yourname@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" name="phone" value="{{ user.phone }}" placeholder="+968 XXXX XXXX">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Profile Image</label>
+                        <div class="file-input-wrapper">
+                            <div class="btn-file">
+                                <i class="fas fa-cloud-upload-alt"></i> Click to upload new photo
+                            </div>
+                            <input type="file" name="profile_image">
+                        </div>
+                        <small style="color:#888; display:block; margin-top:5px;">Max size 2MB. Format: JPG, PNG</small>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-save" style="margin-right:8px;"></i> Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+                <p>Real Estate Vision</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{{ url_for('homepage') }}">Home Page</a></li>
+                    <li><a href="{{ url_for('terms') }}">Term</a></li>
+                    <li><a href="{{ url_for('predictions') }}">Market Predictions</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Contact Info</h4>
+                <ul>
+                    <li>Sultanate of Oman, Muscat</li>
+                    <li>📞 +968 95237331</li>
+                    <li>📧 realestatevision@gmail.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Real Estate Vision. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+</html>

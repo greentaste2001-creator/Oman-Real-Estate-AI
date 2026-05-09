@@ -1,0 +1,78 @@
+/* 
+ * Address Font Stylesheet
+ * Modern, professional font for all address fields across the website
+ */
+
+/* Import Inter font - modern, clean, professional */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Apply Inter font to all address-related elements */
+.address,
+.address-text,
+.city,
+.city-text,
+.location,
+.location-text,
+.governorate,
+.governorate-text,
+.property-location,
+.property-address,
+.property-city,
+[class*="address"],
+[class*="city"],
+[class*="location"],
+[class*="governorate"],
+li:has-text("City:"),
+li:has-text("Location:"),
+li:has-text("Address:"),
+p:has-text("City:"),
+p:has-text("Location:"),
+p:has-text("Address:"),
+.home-card li:first-of-type,
+.fav-info p:first-of-type,
+.property-info p:first-of-type {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* Specific selectors for address display */
+.home-card ul li:first-child,
+.fav-card .fav-info p:first-of-type,
+.property-card .property-info p:first-of-type,
+.exploring-card .property-location,
+.favorite-card .property-location {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* Address inputs in forms */
+input[type="text"][name*="city"],
+input[type="text"][name*="address"],
+input[type="text"][name*="location"],
+input[type="text"][name*="governorate"],
+select[name*="city"],
+select[name*="location"],
+select[name*="governorate"],
+select[id*="city"],
+select[id*="location"],
+select[id*="governorate"] {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+}
+
+/* Address labels */
+label[for*="city"],
+label[for*="address"],
+label[for*="location"],
+label[for*="governorate"],
+label:has-text("City"),
+label:has-text("Location"),
+label:has-text("Address"),
+label:has-text("Governorate") {
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600;
+}
+

@@ -1,0 +1,310 @@
+#homepage.css
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+/* Color Theme */
+:root {
+    --dark-orange: #C65D20;
+    --light-beige: #F5E9D3;
+    --brown: #5C4033;
+    --soft-yellow: #F8DFA8;
+}
+
+/* Navbar */
+.navbar {
+    width: 100%;
+    background: linear-gradient(to right, var(--brown), var(--dark-orange));
+    padding: 15px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+}
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+}
+.nav-links a {
+    text-decoration: none;
+    color: #ffe9c6;
+    font-weight: 500;
+    transition: 0.3s;
+}
+.nav-links a:hover {
+    color: white;
+}
+.buttons .btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+.login, .signup {
+    background: var(--soft-yellow);
+    color: var(--brown);
+}
+.login:hover, .signup:hover {
+    background: #fff2c4;
+}
+.admin {
+    background: #002147;
+    color: white;
+}
+.admin:hover {
+    background: #003366;
+    transform: translateY(-2px);
+}
+
+
+
+/* Hero Section */
+.hero {
+    position: relative;
+    height: 350px;
+    background: url('../images/eee.jpg') center/cover no-repeat;
+     padding-top: 20px;
+}
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(92, 64, 51, 0.4);
+}
+.hero-content {
+    position: relative;
+    text-align: center;
+    padding-top: 110px;
+    color: white;
+    max-width: 70%;
+    margin: auto;
+}
+.hero-content h1 {
+    font-size: 45px;
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    margin-bottom: 15px;
+}
+
+/* Features Section */
+.features-section {
+    text-align: center;
+    padding: 60px 40px;
+}
+.features-section h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--brown);
+    margin-bottom: 40px;
+}
+
+/* Background behind cards */
+.card-background {
+    background: url('../images/rrr.jpg') center/cover no-repeat;
+    padding: 60px 0;
+    border-radius: 15px;
+}
+
+/* Cards Layout - Flexbox version */
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;       /* السماح للبطاقات بالانتقال للسطر التالي */
+    justify-content: center;
+    gap: 25px;
+}
+
+.card {
+    flex: 0 1 calc(33.333% - 16px); /* 3 بطاقات في الصف */
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 18px;
+    padding: 28px;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    transition: 0.3s;
+    margin-bottom: 25px; /* مسافة للأسفل عند الانتقال للسطر الجديد */
+}
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+.card-icon {
+    font-size: 45px;
+    color: var(--dark-orange);
+    margin-bottom: 15px;
+}
+.card h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: var(--brown);
+}
+.card p {
+    font-size: 14px;
+    color: #444;
+}
+
+/* Responsive for medium screens */
+@media screen and (max-width: 1024px) {
+    .card {
+        flex: 0 1 calc(50% - 16px); /* 2 بطاقات في الصف */
+    }
+}
+
+/* Responsive for small screens */
+@media screen and (max-width: 700px) {
+    .card {
+        flex: 0 1 100%; /* بطاقة واحدة في الصف */
+    }
+}
+/* تنسيق قسم المميزات */
+.features {
+    padding: 80px 10%;
+    background: #fff;
+    text-align: center;
+}
+
+.section-title h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.feature-card {
+    padding: 40px;
+    border-radius: 15px;
+    background: #f9f9f9;
+    transition: 0.3s;
+    border-bottom: 4px solid transparent;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    border-color: #C65D20; /* لون البرتقالي مالك */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.feature-card i {
+    font-size: 45px;
+    color: #C65D20;
+    margin-bottom: 20px;
+}
+
+
+
+
+/* -------------------- Footer -------------------- */
+footer {
+  background-color: #1f1f1f;
+  color: #eaeaea;
+  padding: 55px 70px 25px;
+  font-size: 16px;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 50px;
+}
+
+.footer-left img {
+  width: 140px;
+  margin-bottom: 12px;
+}
+
+.footer-left p {
+  font-size: 17px;
+  max-width: 300px;
+  line-height: 1.6;
+}
+
+.footer-social a img {
+  width: 24px;
+  transition: transform 0.3s;
+}
+
+.footer-social a:hover img {
+  transform: scale(1.15);
+}
+
+.footer-column h4 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #ffffff;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 9px;
+}
+
+.footer-column ul li a {
+  text-decoration: none;
+  color: #bfbfbf;
+  transition: color 0.3s;
+  font-size: 16px;
+}
+
+.footer-column ul li a:hover {
+  color: #ffffff;
+}
+
+.footer-divider {
+  border-top: 1px solid #444;
+  margin: 25px 0 10px;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 15px;
+  color: #999;
+}
+
+/* منع التمرير الأفقي */
+body {
+    overflow-x: hidden;
+}
+
+/* التأكد أن الهيرو والبطاقات لا تتجاوز العرض */
+.hero, .hero-content, .cards-container, .card-background {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* إذا أي padding زائد يسبب overflow */
+* {
+    box-sizing: border-box;
+}
