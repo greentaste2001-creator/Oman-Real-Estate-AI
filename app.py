@@ -67,6 +67,171 @@ def predict_logic(data_dict):
 @app.route('/predictions')
 def predictions():
     return render_template('predictions.html')
+
+@app.route('/buyer_profile')
+def buyer_profile():
+    if 'user_id' not in session: return redirect(url_for('login'))
+    db = get_db_connection()
+    cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    try:
+        cur.execute("SELECT * FROM user_info WHERE id=%s", (session['user_id'],))
+        user = cur.fetchone()
+        if not user: return redirect(url_for('buyer_edit_profile'))
+        return render_template('buyer_profile.html', username=user['username'], email=user['email'], phone=user['phone'], profile_image=user['profile_image'])
+    finally:
+        cur.close()
+        db.close()
+
+@app.route('/buyer_edit_profile', methods=['GET', 'POST'])
+def buyer_edit_profile():
+    if 'user_id' not in session: return redirect(url_for('login'))
+    db = get_db_connection()
+    cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    try:
+        if request.method == 'POST':
+            file = request.files.get('profile_image')
+            img_name = "default.png"
+            if file and file.filename != '':
+                img_name = secure_filename(file.filename)
+                file.save(os.path.join('static/images/profiles', img_name))
+            
+            cur.execute("""INSERT INTO user_info (id, username, email, phone, profile_image) 
+                           VALUES (%s,%s,%s,%s,%s) 
+                           ON CONFLICT (id) DO UPDATE SET username=EXCLUDED.username, email=EXCLUDED.email, phone=EXCLUDED.phone, profile_image=EXCLUDED.profile_image""",
+                        (session['user_id'], request.form.get('username'), request.form.get('email'), request.form.get('phone'), img_name))
+            db.commit()
+            return redirect(url_for('buyer_profile'))
+        
+        cur.execute("SELECT * FROM user_info WHERE id=%s", (session['user_id'],))
+        user = cur.fetchone() or {'username': '', 'email': '', 'phone': ''}
+        return render_template('buyer_edit_profile.html', user=user)
+    finally:
+        cur.close()
+        db.close()
+
+# --- راوترات البروفايل المفقودة ---
+
+@app.route('/profile')
+def profile():
+    if 'user_id' not in session: return redirect(url_for('login'))
+    db = get_db_connection()
+    cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    try:
+        cur.execute("SELECT * FROM users WHERE id=%s", (session['user_id'],))
+        user_data = cur.fetchone()
+        return render_template('profile.html', user=user_data)
+    finally:
+        cur.close()
+        db.close()
+
+@app.route('/edit_profile', methods=['GET', 'POST'])
+def edit_profile():
+    if 'user_id' not in session: 
+        return redirect(url_for('login'))
+        
+    db = get_db_connection()
+    cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    
+    try:
+        if request.method == 'POST':
+            new_name = request.form.get('username')
+            new_email = request.form.get('email')
+            
+            # تحديث البيانات في جدول users الأساسي
+            cur.execute("""
+                UPDATE users 
+                SET name=%s, email=%s 
+                WHERE id=%s
+            """, (new_name, new_email, session['user_id']))
+            
+            db.commit()
+            
+            # تحديث الاسم في "الجلسة" عشان يتغير فوق في الهيدر فوراً
+            session['name'] = new_name
+            
+            return redirect(url_for('profile'))
+            
+        # إذا كان الطلب GET (عرض الصفحة)، نجلب بيانات المستخدم الحالية
+        cur.execute("SELECT * FROM users WHERE id=%s", (session['user_id'],))
+        user_data = cur.fetchone()
+        return render_template('edit_profile.html', user=user_data)
+        
+    except Exception as e:
+        print(f"❌ Error updating profile: {e}")
+        return "حدث خطأ أثناء التحديث", 500
+    finally:
+        cur.close()
+        db.close()
+
+# --- راوترات إضافية (تحسباً للأخطاء الجاية) ---
+
+@app.route('/property_details/<int:property_id>')
+def property_details(property_id):
+    db = get_db_connection()
+    cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    try:
+        cur.execute("SELECT * FROM properties WHERE id = %s", (property_id,))
+        property_data = cur.fetchone()
+        return render_template('property_details.html', property=property_data)
+    finally:
+        cur.close()
+        db.close()
+
+
+@app.route('/edit_property/<int:property_id>', methods=['GET', 'POST'])
+def edit_property(property_id):
+    if 'user_id' not in session: return redirect(url_for('login'))
+    db = get_db_connection()
+    cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    try:
+        if request.method == 'POST':
+            # كود التحديث (Update) لبيانات العقار
+            db.commit()
+            return redirect(url_for('my_listings'))
+        
+        cur.execute("SELECT * FROM properties WHERE id=%s AND seller_id=%s", (property_id, session['user_id']))
+        prop = cur.fetchone()
+        return render_template('seller_edit_property.html', property=prop)
+    finally:
+        cur.close()
+        db.close()
+
+@app.route('/delete_property/<int:property_id>', methods=['POST'])
+def delete_property(property_id):
+    if 'user_id' not in session: return redirect(url_for('login'))
+    db = get_db_connection()
+    cur = db.cursor()
+    try:
+        cur.execute("DELETE FROM favorites WHERE property_id=%s", (property_id,))
+        cur.execute("DELETE FROM properties WHERE id=%s AND seller_id=%s", (property_id, session['user_id']))
+        db.commit()
+        return redirect(url_for('my_listings'))
+    finally:
+        cur.close()
+        db.close()
+
+@app.route('/delete_user/<int:user_id>', methods=['POST'])
+def delete_user(user_id):
+    if session.get('user_type') != 'admin': return redirect(url_for('login'))
+    db = get_db_connection()
+    cur = db.cursor()
+    try:
+        cur.execute("DELETE FROM users WHERE id=%s", (user_id,))
+        db.commit()
+        return redirect(url_for('admin_dashboard'))
+    finally:
+        cur.close()
+        db.close()
+
+@app.route('/approve_property/<int:property_id>', methods=['POST'])
+def approve_property(property_id):
+    db = get_db_connection()
+    cur = db.cursor()
+    cur.execute("UPDATE properties SET status='Approved' WHERE id=%s", (property_id,))
+    db.commit()
+    return redirect(url_for('admin_dashboard'))
+
+
 @app.route('/')
 def homepage():
     return render_template('homepage.html')
@@ -239,6 +404,18 @@ def make_prediction():
     data = {k: request.form.get(k) for k in ['governorate', 'wilayat', 'property_type', 'area', 'bedrooms', 'bathrooms', 'floor', 'building_age']}
     price = predict_logic(data)
     return jsonify({"predicted_price": round(float(price), 2)})
+@app.route('/reject_property/<int:property_id>', methods=['POST'])
+def reject_property(property_id):
+    if session.get('user_type') != 'admin': return redirect(url_for('login'))
+    db = get_db_connection()
+    cur = db.cursor()
+    try:
+        cur.execute("UPDATE properties SET status='Rejected' WHERE id=%s", (property_id,))
+        db.commit()
+        return redirect(url_for('admin_dashboard'))
+    finally:
+        cur.close()
+        db.close()
 
 @app.route('/logout')
 def logout():
