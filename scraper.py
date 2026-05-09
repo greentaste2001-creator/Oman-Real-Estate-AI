@@ -1,5 +1,5 @@
 import pandas as pd
-import mysql.connector
+import psycopg2
 from datetime import datetime
 import requests  # المكتبة الجديدة لجلب البيانات من الإنترنت
 
@@ -25,11 +25,12 @@ def get_live_oman_inflation():
 def scrape_data():
     try:
         # 1. الاتصال بقاعدة البيانات
-        db = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="real_estate_vision"
+        db = psycopg2.connect(
+            host="dpg-d7vplsbtqb8s73fjf1rg-a.oregon-postgres.render.com",
+            user="real_estate_db_cg70_user",
+            password="yh1FPDg40EqgIxP0fkcqj7c23ekARCS6",
+            database="real_estate_db_cg70",
+            port="5432"
         )
         cursor = db.cursor()
 
@@ -81,9 +82,10 @@ def scrape_data():
     except Exception as e:
         print(f"❌ خطأ في عملية المزامنة: {e}")
     finally:
-        if db.is_connected():
+        if db:
             cursor.close()
             db.close()
+            print("🔒 تم إغلاق الاتصال بالقاعدة.")
 
 if __name__ == "__main__":
     scrape_data()
