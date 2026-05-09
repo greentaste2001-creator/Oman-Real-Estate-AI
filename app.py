@@ -70,6 +70,9 @@ def predictions():
 @app.route('/')
 def homepage():
     return render_template('homepage.html')
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
 
 @app.route('/signup')
 def signup():
