@@ -60,10 +60,13 @@ def retrain():
 
         print(f"🎯 XGBoost Model Retrained Successfully! Data size: {len(df)}")
 
-    except Exception as e:
+   except Exception as e:
         print(f"❌ Error during retraining: {e}")
     finally:
-        db.close()
+        # نتحقق إذا كان المتغير db موجوداً وتم إنشاء الاتصال فعلاً قبل محاولة إغلاقه
+        if 'db' in locals() and db:
+            db.close()
+            print("🔒 Connection to Render closed.")
 
 if __name__ == "__main__":
     retrain()
