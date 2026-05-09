@@ -1,16 +1,21 @@
 import pandas as pd
-import mysql.connector
+import psycopg2
 from xgboost import XGBRegressor
 from sklearn.preprocessing import LabelEncoder
 import pickle
 
 def retrain():
     try:
-        db = mysql.connector.connect(
-            host="localhost", user="root", password="", database="real_estate_vision"
+        db = psycopg2.connect(
+            host="dpg-d7vplsbtqb8s73fjf1rg-a.oregon-postgres.render.com",
+            user="real_estate_db_cg70_user",
+            password="yh1FPDg40EqgIxP0fkcqj7c23ekARCS6",
+            database="real_estate_db_cg70",
+            port="5432"
         )
         # جلب البيانات
-        df = pd.read_sql("SELECT * FROM market_data", db)
+        query = "SELECT * FROM market_data"
+        df = pd.read_sql(query, db)
         # توحيد المسميات عشان الموديل ما يتلخبط
         df['property_type'] = df['property_type'].replace('Apartments', 'Apartment')
         
