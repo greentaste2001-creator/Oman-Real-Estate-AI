@@ -690,6 +690,7 @@ def buyer_edit_profile():
 # -------------------- PREDICT API --------------------
 @app.route('/predict', methods=['POST'])
 def make_prediction():
+    db = None # لضمان عدم حدوث خطأ في الـ finally
     try:
         data_for_model = {
             'governorate': request.form.get("governorate"),
@@ -702,29 +703,49 @@ def make_prediction():
             'building_age': request.form.get("building_age")
         }
 
+        # حساب التوقع باستخدام الموديل
         price = predict_logic(data_for_model)
 
-        cursor.execute("""
-            INSERT INTO market_data
-            (governorate, wilayat, property_type, area, bedrooms, bathrooms, floor, building_age, price)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
-        """, (
-            data_for_model['governorate'],
-            data_for_model['wilayat'],
-            data_for_model['property_type'],
-            data_for_model['area'],
-            data_for_model['bedrooms'],
-            data_for_model['bathrooms'],
-            data_for_model['floor'],
-            data_for_model['building_age'],
-            price
-        ))
-
-        db.commit()
+        # --- الجزء الخاص بحفظ البيانات في قاعدة البيانات ---
+        # نفتح اتصالاً سريعاً فقط إذا أردتِ حفظ كل عملية بحث يقوم بها المستخدمون
+        try:
+            import psycopg2
+            db = psycopg2.connect(
+                host="dpg-d7vplsbtqb8s73fjf1rg-a.oregon-postgres.render.com",
+                user="real_estate_db_cg70_user",
+                password="yh1FPDg40EqgIxP0fkcqj7c23ekARCS6",
+                database="real_estate_db_cg70",
+                port="5432"
+            )
+            cursor = db.cursor()
+            cursor.execute("""
+                INSERT INTO market_data 
+                (governorate, wilayat, property_type, area, bedrooms, bathrooms, floor, building_age, price)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            """, (
+                data_for_model['governorate'],
+                data_for_model['wilayat'],
+                data_for_model['property_type'],
+                data_for_model['area'],
+                data_for_model['bedrooms'],
+                data_for_model['bathrooms'],
+                data_for_model['floor'],
+                data_for_model['building_age'],
+                price
+            ))
+            db.commit()
+            cursor.close()
+        except Exception as db_err:
+            print(f"⚠️ التوقع نجح لكن لم يتم الحفظ في القاعدة: {db_err}")
+        finally:
+            if db:
+                db.close()
+        # -----------------------------------------------
 
         return jsonify({"predicted_price": round(float(price), 2)})
 
     except Exception as e:
+        return jsonify({"error": str(e)})
         return jsonify({"error": str(e)})
 
 
