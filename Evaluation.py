@@ -1,14 +1,17 @@
 import pandas as pd
-import mysql.connector
+import psycopg2
 import pickle
 import numpy as np
 from sklearn.metrics import mean_absolute_error, r2_score
 
 def evaluate():
     try:
-        db = mysql.connector.connect(host="localhost", user="root", password="", database="real_estate_vision")
-        df = pd.read_sql("SELECT * FROM market_data", db)
-        
+        db_url = "postgresql://real_estate_db_cg70_user:yh1FPDg40EqgIxP0fkcqj7c23ekARCS6@dpg-d7vplsbtqb8s73fjf1rg-a.oregon-postgres.render.com/real_estate_db_cg70"
+        engine = create_engine(db_url)
+        df = pd.read_sql("SELECT * FROM market_data", engine)
+        if df.empty:
+            print("⚠️ قاعدة البيانات فارغة، تأكدي من تشغيل السكريب أولاً.")
+            return
         # تحميل الموديل والمشفرات فقط
         with open('model.pkl', 'rb') as f:
             model = pickle.load(f)
@@ -40,7 +43,8 @@ def evaluate():
     except Exception as e:
         print(f"❌ خطأ: {e}")
     finally:
-        db.close()
+        if engine:
+            engine.dispose()
 
 if __name__ == "__main__":
     evaluate()
