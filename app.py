@@ -64,7 +64,9 @@ def predict_logic(data_dict):
         return 0.0
 
 # -------------------- ROUTES --------------------
-
+@app.route('/predictions')
+def predictions():
+    return render_template('predictions.html')
 @app.route('/')
 def homepage():
     return render_template('homepage.html')
