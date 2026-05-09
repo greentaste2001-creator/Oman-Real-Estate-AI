@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, session, jsonify, url_for
-import mysql.connector
+import psycopg2
 from flask_bcrypt import Bcrypt
 import os
 import joblib
@@ -18,14 +18,18 @@ UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # -------------------- الاتصال بقاعدة البيانات --------------------
-db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="",
-    database="real_estate_vision"
-)
-cursor = db.cursor(dictionary=True)
+DATABASE_URL = "رابط_قاعدة_البيانات_هنا"
+try:
+    conn = psycopg2.connect(DATABASE_URL)
+    # نستخدم DictCursor لجعل البيانات تعود على شكل قاموس كما في الكود الأصلي
+    from psycopg2.extras import RealDictCursor
+    db = conn # سوينا هذا السطر عشان الكود تحت ما يتلخبط بين conn و db
+except Exception as e:
+    print(f"❌ Database Connection Error: {e}")
 
+# دالة مساعدة للحصول على cursor يعمل بنظام القواميس
+def get_cursor():
+    return conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 # -------------------- التحديث التلقائي عند التشغيل --------------------
 with app.app_context():
     try:
@@ -98,7 +102,7 @@ def exploring():
         return redirect(url_for('login'))
 
     try:
-        cur = db.cursor(dictionary=True)
+        cur = cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         
         cur.execute("SELECT username, profile_image FROM user_info WHERE id = %s", (session['user_id'],))
         user_data = cur.fetchone()
@@ -135,7 +139,7 @@ def favorite():
         return redirect(url_for('login'))
 
     user_id = session['user_id']
-    cur = db.cursor(dictionary=True)
+    cur = cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     # التعديل هنا: جلب كافة التفاصيل لعرضها في البطاقة
     query = """
@@ -164,7 +168,7 @@ def favorite():
 
 @app.route('/property_details/<int:property_id>')
 def property_details(property_id):
-    cur = db.cursor(dictionary=True)
+    cur = cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cur.execute("SELECT * FROM properties WHERE id = %s", (property_id,))
     property_data = cur.fetchone()
     cur.close()
@@ -180,7 +184,7 @@ def add_to_favorite(property_id):
         return jsonify({"status": "error", "message": "Please login first"}), 401
 
     user_id = session['user_id']
-    cur = db.cursor(dictionary=True)
+    cur = cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     
     try:
         cur.execute("SELECT * FROM favorites WHERE user_id = %s AND property_id = %s", (user_id, property_id))
@@ -423,7 +427,7 @@ def my_listings():
     seller_id = session['user_id']
     
     try:
-        cur = db.cursor(dictionary=True)
+        cur = cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
         query_properties = "SELECT * FROM properties WHERE seller_id=%s"
         cur.execute(query_properties, (seller_id,))
