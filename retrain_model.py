@@ -5,7 +5,9 @@ from sklearn.preprocessing import LabelEncoder
 import pickle
 
 def retrain():
+    db = None # تعريف المتغير خارج try لتجنب خطأ في finally
     try:
+        # 1. الاتصال بـ Render
         db = psycopg2.connect(
             host="dpg-d7vplsbtqb8s73fjf1rg-a.oregon-postgres.render.com",
             user="real_estate_db_cg70_user",
@@ -13,18 +15,18 @@ def retrain():
             database="real_estate_db_cg70",
             port="5432"
         )
-        # جلب البيانات
+        
+        # 2. جلب البيانات
         query = "SELECT * FROM market_data"
         df = pd.read_sql(query, db)
-        # توحيد المسميات عشان الموديل ما يتلخبط
+        
+        # توحيد المسميات
         df['property_type'] = df['property_type'].replace('Apartments', 'Apartment')
         
-        # 1. تنظيف البيانات من القيم الشاذة (تحسين مهم للدقة)
-        # حذف العقارات اللي سعرها مبالغ فيه جداً مقارنة بالمساحة
+        # تنظيف القيم الشاذة
         df = df[df['price'] < df['price'].quantile(0.95)] 
 
-        # 2. تحويل النصوص إلى أرقام بطريقة ذكية (Label Encoding)
-        # هذه الخطوة تحل مشكلة الـ Fragmentation وتساعد XGBoost
+        # 3. تحويل النصوص لأرقام
         le_props = LabelEncoder()
         le_gov = LabelEncoder()
         le_wilayat = LabelEncoder()
@@ -33,14 +35,13 @@ def retrain():
         df['governorate'] = le_gov.fit_transform(df['governorate'])
         df['wilayat'] = le_wilayat.fit_transform(df['wilayat'])
         
-        # تحويل "عمر المبنى" و "الطابق" لأرقام إذا كانت نصوصاً
         df['building_age'] = pd.to_numeric(df['building_age'], errors='coerce').fillna(0)
         df['floor'] = pd.to_numeric(df['floor'], errors='coerce').fillna(0)
 
         X = df[['property_type', 'area', 'bedrooms', 'bathrooms', 'governorate', 'wilayat', 'floor', 'building_age']]
         y = df['price']
 
-        # 3. استخدام XGBoost
+        # 4. تدريب الموديل
         model = XGBRegressor(
             n_estimators=200, 
             learning_rate=0.05, 
@@ -49,24 +50,22 @@ def retrain():
         )
         model.fit(X, y)
 
-        # 4. حفظ الموديل والمشفرات (encoders) لاستخدامها في التنبؤ
+        # 5. حفظ الموديل والمشفرات
         with open('model.pkl', 'wb') as f:
             pickle.dump(model, f)
         
-        # حفظ الـ encoders ضروري عشان الموقع يعرف يترجم كلام المستخدم لأرقام
         encoders = {'property_type': le_props, 'governorate': le_gov, 'wilayat': le_wilayat}
         with open('encoders.pkl', 'wb') as f:
             pickle.dump(encoders, f)
 
         print(f"🎯 XGBoost Model Retrained Successfully! Data size: {len(df)}")
 
-   except Exception as e:
+    except Exception as e:
         print(f"❌ Error during retraining: {e}")
     finally:
-        # نتحقق إذا كان المتغير db موجوداً وتم إنشاء الاتصال فعلاً قبل محاولة إغلاقه
-        if 'db' in locals() and db:
+        if db:
             db.close()
-            print("🔒 Connection to Render closed.")
+            print("🔒 Connection closed.")
 
 if __name__ == "__main__":
     retrain()
