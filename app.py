@@ -110,18 +110,42 @@ def buyer_edit_profile():
         db.close()
 
 
-@app.route('/profile')
+@app.route('/profile', methods=['GET', 'POST']) # أضفنا POST هنا
 def profile():
-    if 'user_id' not in session: return redirect(url_for('login'))
+    if 'user_id' not in session: 
+        return redirect(url_for('login'))
+    
     db = get_db_connection()
     cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    
     try:
-        # لاحظي: غيرنا اسم الجدول لـ user_info واسم العمود لـ user_id
+        if request.method == 'POST':
+            # استلام البيانات من الفورم (تأكدي أن name في HTML يطابق هذه الكلمات)
+            new_username = request.form.get('username')
+            new_email = request.form.get('email')
+            new_phone = request.form.get('phone')
+            
+            # تحديث جدول user_info
+            cur.execute("""
+                UPDATE user_info 
+                SET username=%s, email=%s, phone=%s 
+                WHERE user_id=%s
+            """, (new_username, new_email, new_phone, session['user_id']))
+            
+            db.commit()
+            # تحديث الاسم في السيشين ليظهر التعديل في الهيدر فوراً
+            session['name'] = new_username
+            return redirect(url_for('profile'))
+
+        # الجزء الخاص بعرض الصفحة (GET)
         cur.execute("SELECT * FROM user_info WHERE user_id=%s", (session['user_id'],))
         user_data = cur.fetchone()
         
-        # نرسل user_data للمتصفح
+        if not user_data:
+            return "بيانات المستخدم غير مكتملة في user_info", 404
+            
         return render_template('profile.html', user=user_data)
+        
     finally:
         cur.close()
         db.close()
@@ -202,7 +226,24 @@ def delete_property(property_id):
     finally:
         cur.close()
         db.close()
-
+@app.route('/delete_property_admin/<int:property_id>', methods=['POST'])
+def delete_property_admin(property_id):
+    if session.get('user_type') != 'admin': 
+        return redirect(url_for('login'))
+        
+    db = get_db_connection()
+    cur = db.cursor()
+    try:
+        # حذف من المفضلات أولاً لتجنب مشاكل Foreign Key
+        cur.execute("DELETE FROM favorites WHERE property_id=%s", (property_id,))
+        # حذف العقار مباشرة (بدون شرط الـ seller_id لأن هذا أدمن)
+        cur.execute("DELETE FROM properties WHERE id=%s", (property_id,))
+        db.commit()
+        return redirect(url_for('admin_dashboard'))
+    finally:
+        cur.close()
+        db.close()
+        
 @app.route('/delete_user/<int:user_id>', methods=['POST'])
 def delete_user(user_id):
     if session.get('user_type') != 'admin': return redirect(url_for('login'))
