@@ -425,24 +425,34 @@ def buyer_dashboard():
     db = get_db_connection()
     cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     try:
+        # جلب بيانات المستخدم (ضروري للصورة والاسم)
+        cur.execute("SELECT * FROM user_info WHERE id=%s", (session['user_id'],))
+        user = cur.fetchone()
+
         cur.execute("SELECT COUNT(*) as total FROM properties WHERE status='Approved'")
         avail = cur.fetchone()['total']
+
         cur.execute("SELECT COUNT(*) as total FROM favorites WHERE user_id=%s", (session['user_id'],))
         favs = cur.fetchone()['total']
-        return render_template('buyer_home.html', username=session['name'], available_count=avail, favorite_count=favs)
+
+        # نرسل user بدلاً من session['name'] فقط
+        return render_template('buyer_home.html', user=user, available_count=avail, favorite_count=favs)
     finally:
         cur.close()
         db.close()
-
 @app.route('/exploring')
 def exploring():
     if 'user_id' not in session: return redirect(url_for('login'))
     db = get_db_connection()
     cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     try:
+        cur.execute("SELECT * FROM user_info WHERE id=%s", (session['user_id'],))
+        user = cur.fetchone()
+
         cur.execute("SELECT * FROM properties WHERE status IN ('Approved', 'Available') ORDER BY created_at DESC")
         props = cur.fetchall()
-        return render_template('exploring.html', properties=props, username=session['name'])
+
+        return render_template('exploring.html', properties=props, user=user)
     finally:
         cur.close()
         db.close()
@@ -453,9 +463,18 @@ def favorite():
     db = get_db_connection()
     cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     try:
-        cur.execute("""SELECT p.* FROM properties p JOIN favorites f ON p.id = f.property_id WHERE f.user_id = %s""", (session['user_id'],))
+        # جلب بيانات المستخدم (هذا ما ينقصك وحل الـ 500 Error)
+        cur.execute("SELECT * FROM user_info WHERE id=%s", (session['user_id'],))
+        user = cur.fetchone()
+
+        cur.execute("""
+            SELECT p.* FROM properties p 
+            JOIN favorites f ON p.id = f.property_id 
+            WHERE f.user_id = %s
+        """, (session['user_id'],))
         fav_props = cur.fetchall()
-        return render_template('favorite.html', favorite_properties=fav_props, username=session['name'])
+
+        return render_template('favorite.html', favorite_properties=fav_props, user=user)
     finally:
         cur.close()
         db.close()
@@ -488,7 +507,14 @@ def seller_dashboard():
         cur.execute("SELECT COUNT(*) as total FROM properties WHERE seller_id=%s", (session['user_id'],))
         total = cur.fetchone()['total']
         
-        return render_template('seller_dashboard.html', user=user, total_properties=total)
+        cur.execute("""
+            SELECT COUNT(f.id) as fav_count 
+            FROM favorites f 
+            JOIN properties p ON f.property_id = p.id 
+            WHERE p.seller_id = %s
+        """, (session['user_id'],))
+        
+        return render_template('seller_dashboard.html', user=user, total_properties=total, total_favorites=total_favs)
     finally:
         cur.close()
         db.close()
