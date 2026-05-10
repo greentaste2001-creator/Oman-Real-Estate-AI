@@ -551,6 +551,7 @@ def seller_dashboard():
         cur.execute("SELECT COUNT(*) as total FROM properties WHERE seller_id=%s", (session['user_id'],))
         total = cur.fetchone()['total']
         
+        # جلب عدد المفضلات لعقارات هذا البائع
         cur.execute("""
             SELECT COUNT(f.id) as fav_count 
             FROM favorites f 
@@ -558,11 +559,18 @@ def seller_dashboard():
             WHERE p.seller_id = %s
         """, (session['user_id'],))
         
-        return render_template('seller_dashboard.html', user=user, total_properties=total, total_favorites=total_favs)
+        # --- السطر المفقود كان هنا ---
+        result_favs = cur.fetchone()
+        total_favs = result_favs['fav_count'] if result_favs else 0
+        # ----------------------------
+        
+        return render_template('seller_dashboard.html', 
+                               user=user, 
+                               total_properties=total, 
+                               total_favorites=total_favs)
     finally:
         cur.close()
         db.close()
-
 @app.route('/my_listings')
 def my_listings():
     if 'user_id' not in session: return redirect(url_for('login'))
