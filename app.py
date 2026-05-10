@@ -273,8 +273,41 @@ def homepage():
 def terms():
     return render_template('terms.html')
 
-@app.route('/signup')
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
+        user_type = request.args.get('type', 'buyer')
+
+        db = get_db_connection()
+        cur = db.cursor()
+        try:
+            # 1. إدخال البيانات في جدول users الأساسي
+            cur.execute("""
+                INSERT INTO users (name, email, password, user_type) 
+                VALUES (%s, %s, %s, %s) RETURNING id
+            """, (name, email, hashed_pw, user_type))
+            
+            # الحصول على الـ ID الذي تم إنشاؤه للتو
+            new_user_id = cur.fetchone()[0]
+
+            # 2. إدخال البيانات في جدول user_info فوراً لكي لا يظهر خطأ البروفايل
+            cur.execute("""
+                INSERT INTO user_info (user_id, username, email) 
+                VALUES (%s, %s, %s)
+            """, (new_user_id, name, email))
+
+            db.commit()
+            return redirect(url_for('login'))
+        except Exception as e:
+            db.rollback()
+            return f"Error: {e}"
+        finally:
+            cur.close()
+            db.close()
     return render_template('signup.html')
 @app.route('/login', methods=['GET', 'POST'])
 def login():
