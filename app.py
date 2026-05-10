@@ -244,16 +244,16 @@ def login():
         db = get_db_connection()
         cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         
-        # البحث في جدول user_info حسب صورتك
+        # البحث في جدول users
         cur.execute("SELECT * FROM users WHERE email=%s", (email,))
         user = cur.fetchone()
         cur.close()
         db.close()
 
         if user and bcrypt.check_password_hash(user['password'], password):
-            # تخزين البيانات في الجلسة (Session)
-            session['user_id'] = user['user_id']
-            session['name'] = user['username']
+            # تعديل المسميات هنا لتطابق الصورة (id و name)
+            session['user_id'] = user['id']  # غيرناها من user_id إلى id
+            session['name'] = user['name']    # غيرناها من username إلى name
             session['user_type'] = user['user_type']
 
             # التوجيه حسب النوع
