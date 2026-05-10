@@ -190,7 +190,7 @@
             <button class="fav-btn" onclick="toggleFavorite(${prop.id})">
                 <i class="far fa-heart" id="icon-${prop.id}"></i>
             </button>
-            <img src="/static/uploads/${prop.images || 'default.jpg'}" onerror="this.src='https://via.placeholder.com/300x180?text=No+Image'">
+           <img src="/static/uploads/${prop.images ? prop.images.split(',')[0] : 'default.jpg'}" onerror="this.src='https://via.placeholder.com/300x180?text=No+Image'">
             <div class="card-info">
                 <span style="font-size: 10px; background: #fff5ed; color: #C65D20; padding: 2px 8px; border-radius: 5px; font-weight: 700;">${prop.property_type || 'Property'}</span>
                 <h3 style="margin-top:5px; font-size: 18px; color: var(--brown);">${prop.title}</h3>
