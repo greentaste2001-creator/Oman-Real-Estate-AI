@@ -98,7 +98,7 @@ def handle_prediction():
 @app.route('/predictions')
 def predictions():
     # هذا الاسم 'predictions' هو ما يبحث عنه url_for في ملفات الـ HTML
-    return render_template('prediction.html')
+    return render_template('predictions.html')
 
 @app.route('/buyer_profile')
 def buyer_profile():
