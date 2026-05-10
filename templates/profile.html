@@ -198,7 +198,7 @@
     <main class="seller-container">
         <aside class="sidebar">
             <div class="side-profile-card">
-                <img src="{{ url_for('static', filename='images/profiles/' ~ profile_image) if profile_image else url_for('static', filename='images/default.png') }}" alt="Profile">
+               <img src="{{ url_for('static', filename='images/profiles/' ~ profile_image) if profile_image else url_for('static', filename='images/default.png') }}" alt="Profile">
                 <h3>{{ username if username else 'New Member' }}</h3>
             </div>
             <ul>
