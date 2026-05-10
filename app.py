@@ -392,15 +392,28 @@ def add_property():
 # --- ADMIN ROUTES ---
 @app.route('/admin')
 def admin_dashboard():
-    if session.get('user_type') != 'admin': return redirect(url_for('login'))
+    # التأكد من أن الداخل هو الأدمن
+    if session.get('user_type') != 'admin': 
+        return redirect(url_for('login'))
+        
     db = get_db_connection()
     cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    
     try:
+        # 1. جلب المستخدمين من جدول التسجيل (users) 
+        # يمكنك عمل JOIN إذا أردتِ عرض أسمائهم من user_info أيضاً
         cur.execute("SELECT * FROM users")
         u = cur.fetchall()
+        
+        # 2. جلب العقارات
         cur.execute("SELECT * FROM properties")
         p = cur.fetchall()
-        return render_template('admin_dashboard.html', users=u, properties=p, total_users=len(u), total_properties=len(p))
+        
+        return render_template('admin_dashboard.html', 
+                               users=u, 
+                               properties=p, 
+                               total_users=len(u), 
+                               total_properties=len(p))
     finally:
         cur.close()
         db.close()
