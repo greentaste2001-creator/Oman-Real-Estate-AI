@@ -210,31 +210,39 @@
         </aside>
 
         <div class="dashboard-content">
-            <div class="profile-main-card">
-                
-                {% if username %}
-                    <img src="{{ url_for('static', filename='images/profiles/' ~ profile_image) if profile_image else url_for('static', filename='images/default.png') }}" class="main-profile-img">
-                    <h2>{{ username }}</h2>
-                    
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <label><i class="fas fa-envelope"></i> Email Address</label>
-                            <p>{{ email }}</p>
-                        </div>
-                        <div class="info-item">
-                            <label><i class="fas fa-phone"></i> Phone Number</label>
-                            <p>{{ phone }}</p>
-                        </div>
-                        <div class="info-item">
-                            <label><i class="fas fa-user-tag"></i> Account Type</label>
-                            <p>Premium Seller</p>
-                        </div>
-                        <div class="info-item">
-                            <label><i class="fas fa-map-marker-alt"></i> Location</label>
-                            <p>Oman</p>
-                        </div>
-                    </div>
+    <div class="profile-main-card">
+        
+        {# التحقق من وجود بيانات المستخدم #}
+        {% if user %}
+            <img src="{{ url_for('static', filename='images/profiles/' ~ user.profile_image) if user.profile_image else url_for('static', filename='images/default.png') }}" class="main-profile-img">
+            <h2>{{ user.username }}</h2>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <p>{{ user.email }}</p>
+                </div>
+                <div class="info-item">
+                    <label><i class="fas fa-phone"></i> Phone Number</label>
+                    <p>{{ user.phone }}</p>
+                </div>
+                </div>
 
+            <a href="{{ url_for('edit_profile') }}" class="edit-profile-btn">
+                <i class="fas fa-edit"></i> Edit Profile Details
+            </a>
+
+        {% else %}
+            <h2>Complete Your Profile</h2>
+            <form method="POST" enctype="multipart/form-data" class="profile-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="username" placeholder="Enter your name" required>
+                </div>
+                </form>
+        {% endif %}
+    </div>
+</div>
                     <a href="{{ url_for('edit_profile') }}" class="edit-profile-btn">
                         <i class="fas fa-edit"></i> Edit Profile Details
                     </a>
