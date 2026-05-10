@@ -194,9 +194,10 @@
     </header>
 
     <div class="main-container">
-        <aside class="sidebar-profile">
-            <img src="{{ url_for('static', filename='images/profiles/' ~ profile_image) }}" alt="Profile Photo">
-            <h3>{{ username }}</h3>
+       <aside class="sidebar-profile">
+            <img src="{{ url_for('static', filename='images/profiles/' ~ user.profile_image) if user and user.profile_image else url_for('static', filename='images/default.png') }}" alt="Profile Photo">
+            
+            <h3>{{ user.username if user else 'Member' }}</h3>
             <p>Verified Property Seller</p>
             
             <ul class="side-nav">
