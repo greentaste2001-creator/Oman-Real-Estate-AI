@@ -478,6 +478,18 @@ def favorite():
     finally:
         cur.close()
         db.close()
+@app.route('/remove_favorite/<int:property_id>', methods=['POST'])
+def remove_favorite(property_id):
+    if 'user_id' not in session: return redirect(url_for('login'))
+    db = get_db_connection()
+    cur = db.cursor()
+    try:
+        cur.execute("DELETE FROM favorites WHERE user_id = %s AND property_id = %s", (session['user_id'], property_id))
+        db.commit()
+    finally:
+        cur.close()
+        db.close()
+    return redirect(url_for('favorite'))
 
 @app.route('/add_to_favorite/<int:property_id>', methods=['POST'])
 def add_to_favorite(property_id):
