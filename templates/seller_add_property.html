@@ -167,8 +167,8 @@
     <main class="seller-container">
         <aside class="sidebar">
             <div class="profile-card">
-                <img src="{{ url_for('static', filename='images/profiles/' ~ profile_image) }}" alt="Profile">
-                <h3>{{ username }}</h3>
+                <img src="{{ url_for('static', filename='images/profiles/' ~ user.profile_image) if user and user.profile_image else url_for('static', filename='images/default.png') }}" alt="Profile">
+                <h3>{{ user.username if user else 'Member' }}</h3>
             </div>
             <ul>
                 <li><a href="{{ url_for('seller_dashboard') }}"><i class="fas fa-th-large"></i> Overview</a></li>
