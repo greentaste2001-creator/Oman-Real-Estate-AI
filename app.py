@@ -473,9 +473,15 @@ def seller_dashboard():
     db = get_db_connection()
     cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     try:
+        # جلب بيانات المستخدم للصورة الشخصية
+        cur.execute("SELECT * FROM user_info WHERE id=%s", (session['user_id'],))
+        user = cur.fetchone()
+        
+        # جلب عدد العقارات
         cur.execute("SELECT COUNT(*) as total FROM properties WHERE seller_id=%s", (session['user_id'],))
         total = cur.fetchone()['total']
-        return render_template('seller_dashboard.html', username=session['name'], total_properties=total)
+        
+        return render_template('seller_dashboard.html', user=user, total_properties=total)
     finally:
         cur.close()
         db.close()
@@ -486,35 +492,59 @@ def my_listings():
     db = get_db_connection()
     cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     try:
+        # جلب بيانات المستخدم
+        cur.execute("SELECT * FROM user_info WHERE id=%s", (session['user_id'],))
+        user = cur.fetchone()
+
+        # جلب العقارات
         cur.execute("SELECT * FROM properties WHERE seller_id=%s", (session['user_id'],))
         props = cur.fetchall()
-        return render_template('seller_my_listings.html', properties=props, username=session['name'])
+        
+        return render_template('seller_my_listings.html', properties=props, user=user)
     finally:
         cur.close()
         db.close()
 
 @app.route('/add_property', methods=['GET', 'POST'])
 def add_property():
+    # 1. التأكد من تسجيل الدخول (وظيفتك الأصلية)
     if 'user_id' not in session: return redirect(url_for('login'))
+    
+    db = get_db_connection()
+    # نستخدم DictCursor لضمان وصول البيانات لـ HTML بشكل صحيح
+    cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    
     if request.method == 'POST':
-        db = get_db_connection()
-        cur = db.cursor()
         try:
+            # 2. معالجة رفع صورة العقار (وظيفتك الأصلية - لم تتغير)
             img = request.files.get('images')
             fname = secure_filename(img.filename) if img else None
-            if fname: img.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
+            if fname: 
+                img.save(os.path.join(app.config['UPLOAD_FOLDER'], fname))
             
+            # 3. إدخال البيانات في الجدول (وظيفتك الأصلية - لم تتغير)
             cur.execute("""INSERT INTO properties (seller_id, title, governorate, wilayat, property_type, surface_area, bedrooms, bathrooms, floor, building_age, furnishing, price, status, phone, images)
                            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'Pending',%s,%s)""",
                         (session['user_id'], request.form['title'], request.form['governorate'], request.form['wilayat'], request.form['property_type'],
                          request.form['surface_area'], request.form['bedrooms'], request.form['bathrooms'], request.form['floor'], request.form['building_age'],
                          request.form['furnishing'], request.form['price'], request.form['phone'], fname))
             db.commit()
+            
+            # 4. التوجيه لصفحة العقارات (وظيفتك الأصلية)
             return redirect(url_for('my_listings'))
         finally:
             cur.close()
             db.close()
-    return render_template('seller_add_property.html', username=session['name'])
+            
+    # 5. الجزء المضاف فقط: جلب بيانات المستخدم لعرض الصورة في الـ Sidebar
+    try:
+        cur.execute("SELECT * FROM user_info WHERE id=%s", (session['user_id'],))
+        user = cur.fetchone()
+        # نرسل كائن user كاملاً بدلاً من مجرد الاسم
+        return render_template('seller_add_property.html', user=user)
+    finally:
+        cur.close()
+        db.close()
 
 # --- ADMIN ROUTES ---
 @app.route('/admin')
