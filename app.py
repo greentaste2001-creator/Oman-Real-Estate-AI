@@ -245,7 +245,7 @@ def login():
         cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         
         # البحث في جدول user_info حسب صورتك
-        cur.execute("SELECT * FROM user_info WHERE email=%s", (email,))
+        cur.execute("SELECT * FROM users WHERE email=%s", (email,))
         user = cur.fetchone()
         cur.close()
         db.close()
