@@ -95,6 +95,11 @@ def handle_prediction():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/predictions')
+def predictions():
+    # هذا الاسم 'predictions' هو ما يبحث عنه url_for في ملفات الـ HTML
+    return render_template('prediction.html')
+
 @app.route('/buyer_profile')
 def buyer_profile():
     if 'user_id' not in session: return redirect(url_for('login'))
