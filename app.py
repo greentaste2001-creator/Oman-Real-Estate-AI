@@ -109,7 +109,6 @@ def buyer_edit_profile():
         cur.close()
         db.close()
 
-# --- راوترات البروفايل المفقودة ---
 
 @app.route('/profile')
 def profile():
@@ -117,8 +116,11 @@ def profile():
     db = get_db_connection()
     cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     try:
-        cur.execute("SELECT * FROM users WHERE id=%s", (session['user_id'],))
+        # لاحظي: غيرنا اسم الجدول لـ user_info واسم العمود لـ user_id
+        cur.execute("SELECT * FROM user_info WHERE user_id=%s", (session['user_id'],))
         user_data = cur.fetchone()
+        
+        # نرسل user_data للمتصفح
         return render_template('profile.html', user=user_data)
     finally:
         cur.close()
@@ -126,39 +128,30 @@ def profile():
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
-    if 'user_id' not in session: 
-        return redirect(url_for('login'))
-        
+    if 'user_id' not in session: return redirect(url_for('login'))
     db = get_db_connection()
     cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    
     try:
         if request.method == 'POST':
             new_name = request.form.get('username')
             new_email = request.form.get('email')
-            
-            # تحديث البيانات في جدول users الأساسي
+            new_phone = request.form.get('phone') # أضفت الهاتف لأنه موجود في جدولك
+
+            # تحديث جدول user_info باستخدام user_id
             cur.execute("""
-                UPDATE users 
-                SET name=%s, email=%s 
-                WHERE id=%s
-            """, (new_name, new_email, session['user_id']))
-            
+                UPDATE user_info 
+                SET username=%s, email=%s, phone=%s 
+                WHERE user_id=%s
+            """, (new_name, new_email, new_phone, session['user_id']))
             db.commit()
             
-            # تحديث الاسم في "الجلسة" عشان يتغير فوق في الهيدر فوراً
-            session['name'] = new_name
-            
+            session['name'] = new_name # لتحديث الاسم في الهيدر
             return redirect(url_for('profile'))
-            
-        # إذا كان الطلب GET (عرض الصفحة)، نجلب بيانات المستخدم الحالية
-        cur.execute("SELECT * FROM users WHERE id=%s", (session['user_id'],))
+
+        # في الـ GET جلب البيانات من user_info
+        cur.execute("SELECT * FROM user_info WHERE user_id=%s", (session['user_id'],))
         user_data = cur.fetchone()
         return render_template('edit_profile.html', user=user_data)
-        
-    except Exception as e:
-        print(f"❌ Error updating profile: {e}")
-        return "حدث خطأ أثناء التحديث", 500
     finally:
         cur.close()
         db.close()
@@ -242,23 +235,37 @@ def terms():
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
         db = get_db_connection()
         cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        try:
-            cur.execute("SELECT * FROM users WHERE email=%s", (request.form['email'],))
-            user = cur.fetchone()
-            if user and bcrypt.check_password_hash(user['password'], request.form['password']):
-                session.update({'user_id': user['id'], 'user_type': user['user_type'], 'name': user['name']})
-                mapping = {'seller': 'seller_dashboard', 'buyer': 'buyer_dashboard', 'admin': 'admin_dashboard'}
-                return redirect(url_for(mapping.get(user['user_type'], 'homepage')))
-            return "Incorrect Email or Password"
-        finally:
-            cur.close()
-            db.close()
+        
+        # البحث في جدول user_info حسب صورتك
+        cur.execute("SELECT * FROM user_info WHERE email=%s", (email,))
+        user = cur.fetchone()
+        cur.close()
+        db.close()
+
+        if user and bcrypt.check_password_hash(user['password'], password):
+            # تخزين البيانات في الجلسة (Session)
+            session['user_id'] = user['user_id']
+            session['name'] = user['username']
+            session['user_type'] = user['user_type']
+
+            # التوجيه حسب النوع
+            if user['user_type'] == 'admin':
+                return redirect(url_for('admin_dashboard'))
+            elif user['user_type'] == 'seller':
+                return redirect(url_for('seller_dashboard'))
+            else:
+                return redirect(url_for('buyer_dashboard'))
+        else:
+            return "Incorrect Email or Password", 401
+            
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
