@@ -64,9 +64,36 @@ def predict_logic(data_dict):
         return 0.0
 
 # -------------------- ROUTES --------------------
-@app.route('/predictions')
-def predictions():
-    return render_template('predictions.html')
+from flask import request, jsonify
+# تأكدي من استيراد دالة predict من ملفها (افترضنا أن اسم الملف prediction_logic.py)
+from prediction_logic import predict 
+
+@app.route('/predict', methods=['POST'])
+def handle_prediction():
+    try:
+        # 1. استقبال البيانات من الفورم
+        data = {
+            'property_type': request.form.get('property_type'),
+            'area': request.form.get('area'),
+            'bedrooms': request.form.get('bedrooms'),
+            'bathrooms': request.form.get('bathrooms'),
+            'governorate': request.form.get('governorate'),
+            'wilayat': request.form.get('wilayat'),
+            'floor': request.form.get('floor'),
+            'building_age': request.form.get('building_age')
+        }
+
+        # 2. استدعاء دالة التنبؤ
+        result = predict(data)
+
+        # 3. التأكد من عدم وجود خطأ نصي في النتيجة
+        if isinstance(result, str) and "Error" in result:
+            return jsonify({'error': result}), 400
+
+        return jsonify({'predicted_price': result})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/buyer_profile')
 def buyer_profile():
