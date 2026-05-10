@@ -209,7 +209,7 @@
             </ul>
         </aside>
 
-        <div class="dashboard-content">
+<div class="dashboard-content">
     <div class="profile-main-card">
         
         {% if user %}
@@ -223,7 +223,7 @@
                 </div>
                 <div class="info-item">
                     <label><i class="fas fa-phone"></i> Phone Number</label>
-                    <p>{{ user.phone }}</p>
+                    <p>{{ user.phone if user.phone else 'Not set' }}</p>
                 </div>
             </div>
 
@@ -258,37 +258,6 @@
 
     </div>
 </div>
-                    <a href="{{ url_for('edit_profile') }}" class="edit-profile-btn">
-                        <i class="fas fa-edit"></i> Edit Profile Details
-                    </a>
-
-                {% else %}
-                    <h2>Complete Your Profile</h2>
-                    <form method="POST" enctype="multipart/form-data" class="profile-form">
-                        <div class="form-group">
-                            <label>Full Name</label>
-                            <input type="text" name="username" placeholder="Enter your name" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Email Address</label>
-                            <input type="email" name="email" placeholder="Enter your email" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Phone Number</label>
-                            <input type="text" name="phone" placeholder="e.g. +968 XXXX XXXX" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Profile Image</label>
-                            <input type="file" name="profile_image">
-                        </div>
-                        <button type="submit" class="edit-profile-btn" style="border:none; cursor:pointer; width:100%; grid-column: span 2;">
-                            Save Profile
-                        </button>
-                    </form>
-                {% endif %}
-
-            </div>
-        </div>
     </main>
 
     <footer>
