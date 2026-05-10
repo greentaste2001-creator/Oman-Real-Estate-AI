@@ -65,8 +65,8 @@ def predict_logic(data_dict):
 
 # -------------------- ROUTES --------------------
 from flask import request, jsonify
-# تأكدي من استيراد دالة predict من ملفها (افترضنا أن اسم الملف prediction_logic.py)
-from prediction_logic import predict 
+
+from predict import predict
 
 @app.route('/predict', methods=['POST'])
 def handle_prediction():
