@@ -255,13 +255,20 @@ def edit_property(property_id):
     cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     try:
         if request.method == 'POST':
-            # كود التحديث (Update) لبيانات العقار
+            # ... كود التحديث (Update) لبيانات العقار يظل كما هو ...
             db.commit()
             return redirect(url_for('my_listings'))
         
+        # 1. جلب بيانات العقار
         cur.execute("SELECT * FROM properties WHERE id=%s AND seller_id=%s", (property_id, session['user_id']))
         prop = cur.fetchone()
-        return render_template('seller_edit_property.html', property=prop)
+
+        # 2. جلب بيانات المستخدم (الإضافة هنا)
+        cur.execute("SELECT * FROM user_info WHERE id = %s", (session['user_id'],))
+        user = cur.fetchone()
+
+        # 3. إرسال المتغيرين معاً للصفحة
+        return render_template('seller_edit_property.html', property=prop, user=user)
     finally:
         cur.close()
         db.close()
