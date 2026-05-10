@@ -110,72 +110,125 @@ def buyer_edit_profile():
         db.close()
 
 
-@app.route('/profile', methods=['GET', 'POST']) # أضفنا POST هنا
+@app.route('/profile', methods=['GET', 'POST'])
 def profile():
     if 'user_id' not in session: 
         return redirect(url_for('login'))
     
     db = get_db_connection()
+    # استخدام RealDictCursor مهم جداً لكي يتعامل HTML مع البيانات كقاموس (user.username)
     cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     
     try:
+        user_id = session['user_id']
+
         if request.method == 'POST':
-            # استلام البيانات من الفورم (تأكدي أن name في HTML يطابق هذه الكلمات)
+            # استلام البيانات من الفورم
             new_username = request.form.get('username')
             new_email = request.form.get('email')
             new_phone = request.form.get('phone')
             
-            # تحديث جدول user_info
+            # تحديث جدول user_info (نفترض أن السجل موجود)
             cur.execute("""
                 UPDATE user_info 
                 SET username=%s, email=%s, phone=%s 
                 WHERE user_id=%s
-            """, (new_username, new_email, new_phone, session['user_id']))
+            """, (new_username, new_email, new_phone, user_id))
             
             db.commit()
-            # تحديث الاسم في السيشين ليظهر التعديل في الهيدر فوراً
-            session['name'] = new_username
+            session['name'] = new_username # تحديث الاسم في الجلسة للهيدر
             return redirect(url_for('profile'))
 
-        # الجزء الخاص بعرض الصفحة (GET)
-        cur.execute("SELECT * FROM user_info WHERE user_id=%s", (session['user_id'],))
+        # --- الجزء الخاص بعرض الصفحة (GET) ---
+        
+        # 1. نحاول جلب البيانات من user_info
+        cur.execute("SELECT * FROM user_info WHERE user_id=%s", (user_id,))
         user_data = cur.fetchone()
         
+        # 2. إذا لم نجد بيانات (مستخدم جديد أو مشكلة الربط)، ننشئ سجل تلقائي
         if not user_data:
-            return "بيانات المستخدم غير مكتملة في user_info", 404
+            # نجلب بياناته الأساسية من جدول users لكي نضعها كبداية
+            cur.execute("SELECT name, email FROM users WHERE id=%s", (user_id,))
+            basic_info = cur.fetchone()
             
-        return render_template('profile.html', user=user_data)
+            if basic_info:
+                cur.execute("""
+                    INSERT INTO user_info (user_id, username, email, profile_image) 
+                    VALUES (%s, %s, %s, %s)
+                """, (user_id, basic_info['name'], basic_info['email'], 'default.png'))
+                db.commit()
+                
+                # نجلب البيانات مرة أخرى بعد الإدخال
+                cur.execute("SELECT * FROM user_info WHERE user_id=%s", (user_id,))
+                user_data = cur.fetchone()
+
+        # 3. إرسال كل البيانات المطلوبة للـ HTML
+        # نرسل user (للجدول) و username و profile_image (للسيدبار)
+        return render_template('profile.html', 
+                               user=user_data, 
+                               username=user_data['username'] if user_data else session.get('name'),
+                               profile_image=user_data['profile_image'] if user_data else 'default.png')
         
+    except Exception as e:
+        print(f"Error in profile: {e}")
+        return f"حدث خطأ في النظام: {e}", 500
     finally:
         cur.close()
         db.close()
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
-    if 'user_id' not in session: return redirect(url_for('login'))
+    if 'user_id' not in session: 
+        return redirect(url_for('login'))
+        
     db = get_db_connection()
     cur = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    
     try:
+        user_id = session['user_id']
+        
         if request.method == 'POST':
             new_name = request.form.get('username')
             new_email = request.form.get('email')
-            new_phone = request.form.get('phone') # أضفت الهاتف لأنه موجود في جدولك
+            new_phone = request.form.get('phone')
+            profile_pic = request.files.get('profile_image') # استلام ملف الصورة
 
-            # تحديث جدول user_info باستخدام user_id
+            # 1. تحديث البيانات النصية أولاً
             cur.execute("""
                 UPDATE user_info 
                 SET username=%s, email=%s, phone=%s 
                 WHERE user_id=%s
-            """, (new_name, new_email, new_phone, session['user_id']))
+            """, (new_name, new_email, new_phone, user_id))
+
+            # 2. إذا رفع المستخدم صورة جديدة، نقوم بحفظها وتحديث الجدول
+            if profile_pic and profile_pic.filename != '':
+                filename = f"user_{user_id}_{profile_pic.filename}"
+                # تأكدي أن هذا المسار موجود في مجلد مشروعك
+                save_path = os.path.join('static/images/profiles', filename)
+                profile_pic.save(save_path)
+                
+                cur.execute("UPDATE user_info SET profile_image=%s WHERE user_id=%s", (filename, user_id))
+
             db.commit()
-            
-            session['name'] = new_name # لتحديث الاسم في الهيدر
+            session['name'] = new_name # تحديث الاسم في السيشين
             return redirect(url_for('profile'))
 
-        # في الـ GET جلب البيانات من user_info
-        cur.execute("SELECT * FROM user_info WHERE user_id=%s", (session['user_id'],))
+        # --- في حالة GET: جلب البيانات لعرضها في الفورم ---
+        cur.execute("SELECT * FROM user_info WHERE user_id=%s", (user_id,))
         user_data = cur.fetchone()
-        return render_template('edit_profile.html', user=user_data)
+
+        # إذا دخل الصفحة ومسجل الدخول لكن بياناته غير موجودة في user_info (حالة نادرة)
+        if not user_data:
+            return redirect(url_for('profile')) # ستقوم دالة profile بإنشائه تلقائياً
+
+        return render_template('edit_profile.html', 
+                               user=user_data,
+                               username=user_data['username'],
+                               profile_image=user_data['profile_image'])
+                               
+    except Exception as e:
+        print(f"Error in edit_profile: {e}")
+        return f"Error: {e}", 500
     finally:
         cur.close()
         db.close()
