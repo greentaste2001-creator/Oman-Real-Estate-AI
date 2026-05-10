@@ -162,9 +162,9 @@
                 {% for property in favorite_properties %}
                 <div class="fav-card">
                     <img src="{{ url_for('static', filename='uploads/' ~ property.image_url) if property.image_url else 'https://via.placeholder.com/500x300' }}" 
-                         class="fav-card-img" 
-                         alt="Property" 
-                         onerror="this.src='https://via.placeholder.com/500x300?text=Property+Image'">
+                      class="fav-card-img" 
+                      alt="Property" 
+                      onerror="this.src='https://via.placeholder.com/500x300?text=Property+Image'">
                     
                     <div class="fav-card-body">
                         <span class="property-tag">{{ property.property_type or 'Property' }}</span>
